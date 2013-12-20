@@ -1,0 +1,13 @@
+{
+    "name": "xtremeengine",
+    "url": "http://github.com/hccampos/xtremeengine-haxe",
+    "license": "MIT",
+    "tags": [ "game-engine", "engine", "game", "graphics" ],
+    "description": "XtremeEngine is a simple, flexible and easily extensible game engine. It uses IOC (inversion of control), has an extensible entity-component system, a simple animation system and it integrates with physics engines (currently I'm thinking of supporting NAPE but Box2D shouldn't be hard to implement).",
+    "version": "0.0.1",
+    "releasenote": "Initial development release - WIP",
+    "contributors": [ "hccampos" ],
+    "dependencies": {
+        "openfl": ""
+    }
+}
