@@ -15,7 +15,6 @@ import xtremeengine.physics.NapePhysicsManager;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
 import xtremeengine.scene.SceneManager;
-import xtremeengine.screens.IScreenManager;
 import flash.events.EventDispatcher;
 
 /**
@@ -279,7 +278,7 @@ class Core extends EventDispatcher implements ICore
         {
             var updateablePlugin:IUpdateable = cast plugin;
             _updateablePlugins.push(updateablePlugin);
-            _updateablePlugins.sort(function (a, b) {
+            _updateablePlugins.sort(function (a:IUpdateable, b:IUpdateable) {
                 if (a.updateOrder == b.updateOrder) { return 0; }
                 return a.updateOrder > b.updateOrder ? 1 : -1;
             });

@@ -1,7 +1,7 @@
 package xtremeengine.gui;
 
 import xtremeengine.ICore;
-import xtremeengine.Plugin;
+import xtremeengine.APlugin;
 import flash.display.DisplayObjectContainer;
 import flash.Lib;
 
@@ -10,7 +10,7 @@ import flash.Lib;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class GuiManager extends Plugin implements IGuiManager
+class GuiManager extends APlugin implements IGuiManager
 {
     private var _guiContainer:DisplayObjectContainer;
     private var _isEnabled:Bool;

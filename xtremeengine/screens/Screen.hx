@@ -1,7 +1,5 @@
 package xtremeengine.screens;
 
-import xtremeengine.CoreObject;
-import xtremeengine.Core;
 import xtremeengine.utils.MathUtils;
 
 /**
@@ -30,7 +28,7 @@ class Screen implements IScreen
      * @param screenManager
      *      The screen manager to which the screen belongs.
      */
-    public new(screenManager:IScreenManager):Void
+    public function new(screenManager:IScreenManager):Void
     {
         _screenManager = screenManager;
         _isInitialized = false;

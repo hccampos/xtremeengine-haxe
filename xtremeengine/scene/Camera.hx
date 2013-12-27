@@ -1,6 +1,6 @@
 package xtremeengine.scene;
 
-import xtremeengine.ICore;
+import xtremeengine.scene.ISceneManager;
 import xtremeengine.INamed;
 
 /**
@@ -14,15 +14,15 @@ class Camera extends SceneNode implements INamed
 
 	/**
 	 * Initializes a new camera.
-     *
-     * @param core
-     *      The core object to which the camera belongs.
+	 *
+	 * @param sceneManager
+	 *      The scene manager to which the camera belongs.
      * @param name
      *      The name of the camera.
 	 */
-	public function new(core:ICore, name:String)
+	public function new(sceneManager:ISceneManager, name:String)
 	{
-		super(core);
+        super(sceneManager);
         _name = name;
 	}
 

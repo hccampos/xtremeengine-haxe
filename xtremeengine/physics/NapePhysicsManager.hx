@@ -3,7 +3,7 @@ package xtremeengine.physics;
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
 import xtremeengine.physics.IPhysicsController;
-import xtremeengine.Plugin;
+import xtremeengine.APlugin;
 import xtremeengine.utils.Vec2;
 
 /**
@@ -11,7 +11,7 @@ import xtremeengine.utils.Vec2;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class NapePhysicsManager extends Plugin implements IPhysicsManager
+class NapePhysicsManager extends APlugin implements IPhysicsManager
 {
     private var _gravity:Vec2;
     private var _controllers:Array<IPhysicsController>;

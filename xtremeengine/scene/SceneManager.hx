@@ -2,14 +2,14 @@ package xtremeengine.scene;
 
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
-import xtremeengine.Plugin;
+import xtremeengine.APlugin;
 
 /**
  * Default implementation of the ISceneManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SceneManager extends Plugin implements ISceneManager
+class SceneManager extends APlugin implements ISceneManager
 {
 	private var _rootSceneNode:SceneNode;
 	private var _activeCamera:Camera;
@@ -43,8 +43,7 @@ class SceneManager extends Plugin implements ISceneManager
 	{
         super.initialize();
 
-        _rootSceneNode = new SceneNode(core);
-        _rootSceneNode.addToContext(this.core.context);
+        _rootSceneNode = new SceneNode(this, this.core.context);
 	}
 	
 	/**
@@ -52,7 +51,8 @@ class SceneManager extends Plugin implements ISceneManager
 	 */
 	public override function destroy():Void
 	{
-		_rootSceneNode.removeFromContext();
+        rootSceneNode.removeDescendants();
+
 		_rootSceneNode = null;
 		_activeCamera = null;
 		_cameras = null;

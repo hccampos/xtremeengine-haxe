@@ -1,8 +1,7 @@
 package xtremeengine.scene;
 
+import xtremeengine.errors.Error;
 import xtremeengine.Context;
-import xtremeengine.CoreObject;
-import xtremeengine.ICore;
 import xtremeengine.utils.MathUtils;
 import xtremeengine.utils.Vec2;
 
@@ -12,12 +11,11 @@ import xtremeengine.utils.Vec2;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SceneNode extends CoreObject implements IPositionable
-                             implements IRotateable
-                             implements IScalable
+class SceneNode implements IPositionable implements IRotateable implements IScalable
 {
+    private var _sceneManager:ISceneManager;
     private var _parent:SceneNode;
-    private var _parentContext:Context;
+    private var _children:Array<SceneNode>;
     private var _context:Context;
 
     //--------------------------------------------------------------------------------------------//
@@ -25,16 +23,15 @@ class SceneNode extends CoreObject implements IPositionable
     /**
      * Initializes a new scene node.
      *
-     * @param core
-     *      The core object to which the scene node belongs.
+     * @param sceneManager
+     *      The scene manager to which the node belongs.
      */
-    public function new(core:ICore):Void
+    public function new(sceneManager:ISceneManager, ?context:Context):Void
     {
-        super(core);
-
+        _sceneManager = sceneManager;
         _parent = null;
-        _parentContext = null;
-        _context = new Context();
+        _children = new Array<SceneNode>();
+        _context = context == null ? new Context() : context;
     }
 
 
@@ -50,11 +47,16 @@ class SceneNode extends CoreObject implements IPositionable
      */
     public function addChild(child:SceneNode):Void
     {
+        if (child.sceneManager != this.sceneManager) {
+            throw new Error("Cannot add a child that belongs to another scene node.");
+        }
+
         // If the child already has a parent we have to remove it from that parent.
         if (child.parent != null && child.parent != this) { child.remove(); }
         // If this node already has the child node, there's nothing to do.
         if (this.contains(child)) { return; }
 
+        _children.push(child);
         _context.addChild(child._context);
         child._parent = this;
     }
@@ -71,10 +73,26 @@ class SceneNode extends CoreObject implements IPositionable
     {
         if (child.parent != this || !this.contains(child)) { return false; }
 
+        _children.remove(child);
         _context.removeChild(child._context);
         child._parent = null;
 
         return true;
+    }
+
+    /**
+     * Removes all the descendants of the scene node.
+     */
+    public function removeDescendants():Void
+    {
+        var child:SceneNode = null;
+
+        while ((child = _children.pop()) != null)
+        {
+            child.removeDescendants();
+            _context.removeChild(child._context);
+            child._parent = null;
+        }
     }
 
     /**
@@ -103,32 +121,8 @@ class SceneNode extends CoreObject implements IPositionable
     public function contains(child:SceneNode):Bool
     {
         if (child == null) { return false; }
-        return _context.contains(child._context);
-    }
 
-    /**
-     * Adds the scene node to the specified context.
-     */
-    public function addToContext(context:Context):Void
-    {
-        _parentContext = context;
-        _parentContext.addChild(_context);
-    }
-
-    /**
-     * Removes the scene node from the parent context.
-     *
-     * @return True if the scene node was removed and false otherwise.
-     */
-    public function removeFromContext():Bool
-    {
-        if (_parentContext == null) { return false; }
-        if (!_parentContext.contains(_context)) { return false; }
-
-        _parentContext.removeChild(_context);
-        _parentContext = null;
-
-        return true;
+        return Lambda.has(_children, child);
     }
 
     //}
@@ -139,10 +133,22 @@ class SceneNode extends CoreObject implements IPositionable
     //--------------------------------------------------------------------------------------------//
 
     /**
+     * The scene manager to which the node belongs.
+     */
+    public var sceneManager(get, never):ISceneManager;
+    private inline function get_sceneManager():ISceneManager { return _sceneManager; }
+
+    /**
      * The parent of this scene node.
      */
     public var parent(get, never):SceneNode;
     private inline function get_parent():SceneNode { return _parent; }
+
+    /**
+     * The children of the node.
+     */
+    public var children(get, never):Array<SceneNode>;
+    private inline function get_children():SceneNode { return _children; }
 
     /**
 	 * The position of the scene node.
