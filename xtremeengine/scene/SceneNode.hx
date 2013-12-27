@@ -11,11 +11,11 @@ import xtremeengine.utils.Vec2;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SceneNode implements IPositionable implements IRotateable implements IScalable
+class SceneNode implements ISceneNode
 {
     private var _sceneManager:ISceneManager;
-    private var _parent:SceneNode;
-    private var _children:Array<SceneNode>;
+    private var _parent:ISceneNode;
+    private var _children:Array<ISceneNode>;
     private var _context:Context;
 
     //--------------------------------------------------------------------------------------------//
@@ -25,12 +25,14 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
      *
      * @param sceneManager
      *      The scene manager to which the node belongs.
+     * @param context
+     *      The context which is to be wrapped by the scene node.
      */
     public function new(sceneManager:ISceneManager, ?context:Context):Void
     {
         _sceneManager = sceneManager;
         _parent = null;
-        _children = new Array<SceneNode>();
+        _children = new Array<ISceneNode>();
         _context = context == null ? new Context() : context;
     }
 
@@ -40,15 +42,35 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
     //--------------------------------------------------------------------------------------------//
 
     /**
+     * Creates a new scene node and adds it as a child of this node.
+     *
+     * @return The new scene node.
+     */
+    public function createChild():ISceneNode
+    {
+        var newNode:ISceneNode = this.sceneManager.createSceneNode();
+        this.addChild(newNode);
+        return newNode;
+    }
+
+    /**
      * Adds the specified scene node as a child of this scene node.
      *
      * @param child
      *      The scene node which is to be added.
      */
-    public function addChild(child:SceneNode):Void
+    public function addChild(child:ISceneNode):Void
     {
+        // Make sure the scene manager of the child is the same as our scene manager. This way we
+        // ensure that scene nodes belonging to different scene managers are not mixed.
         if (child.sceneManager != this.sceneManager) {
             throw new Error("Cannot add a child that belongs to another scene node.");
+        }
+
+        // Make sure the child is a SceneNode because we need to access the context and parent of
+        // the child.
+        if (!Std.is(child, SceneNode)) {
+            throw new Error("Cannot add a child that has a different concrete type.");
         }
 
         // If the child already has a parent we have to remove it from that parent.
@@ -57,8 +79,11 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
         if (this.contains(child)) { return; }
 
         _children.push(child);
-        _context.addChild(child._context);
-        child._parent = this;
+
+        // Configure the internals of the child.
+        var childNode:SceneNode = cast child;
+        _context.addChild(childNode._context);
+        childNode._parent = this;
     }
 
     /**
@@ -69,13 +94,17 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
      *
      * @return True if the scene node was removed and false otherwise.
      */
-    public function removeChild(child:SceneNode):Bool
+    public function removeChild(child:ISceneNode):Bool
     {
-        if (child.parent != this || !this.contains(child)) { return false; }
+        if (child.parent != this) { return false; }
 
-        _children.remove(child);
-        _context.removeChild(child._context);
-        child._parent = null;
+        var result:Bool = _children.remove(child);
+        if (!result) { return false; }
+
+        // Access the private attributes of the child scene node.
+        var childNode:SceneNode = cast child;
+        _context.removeChild(childNode._context);
+        childNode._parent = null;
 
         return true;
     }
@@ -87,7 +116,7 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
     {
         var child:SceneNode = null;
 
-        while ((child = _children.pop()) != null)
+        while ((child = cast _children.pop()) != null)
         {
             child.removeDescendants();
             _context.removeChild(child._context);
@@ -118,7 +147,7 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
      *
      * @return True if the specified scene node is a child of this scene node and false otherwise.
      */
-    public function contains(child:SceneNode):Bool
+    public function contains(child:ISceneNode):Bool
     {
         if (child == null) { return false; }
 
@@ -141,14 +170,14 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
     /**
      * The parent of this scene node.
      */
-    public var parent(get, never):SceneNode;
-    private inline function get_parent():SceneNode { return _parent; }
+    public var parent(get, never):ISceneNode;
+    private inline function get_parent():ISceneNode { return _parent; }
 
     /**
      * The children of the node.
      */
-    public var children(get, never):Array<SceneNode>;
-    private inline function get_children():SceneNode { return _children; }
+    public var children(get, never):Array<ISceneNode>;
+    private inline function get_children():Array<ISceneNode> { return _children; }
 
     /**
 	 * The position of the scene node.
@@ -215,7 +244,9 @@ class SceneNode implements IPositionable implements IRotateable implements IScal
 	 */
 	public var rotation(get, set):Float;
 	private inline function get_rotation():Float { return MathUtils.toRadians(_context.rotation); }
-	private inline function set_rotation(value:Float):Float { return _context.rotation = MathUtils.toDegrees(value); }
+	private inline function set_rotation(value:Float):Float {
+        return _context.rotation = MathUtils.toDegrees(value);
+    }
 
     /**
      * Whether the node is a root scene node (i.e. has no parent).

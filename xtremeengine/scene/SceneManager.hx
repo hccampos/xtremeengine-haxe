@@ -11,9 +11,9 @@ import xtremeengine.APlugin;
  */
 class SceneManager extends APlugin implements ISceneManager
 {
-	private var _rootSceneNode:SceneNode;
-	private var _activeCamera:Camera;
-	private var _cameras:Array<Camera>;
+	private var _rootSceneNode:ISceneNode;
+	private var _activeCamera:ICamera;
+	private var _cameras:Array<ICamera>;
 	private var _isEnabled:Bool;
 	private var _updateOrder:Int;
 	
@@ -31,7 +31,7 @@ class SceneManager extends APlugin implements ISceneManager
 		
 		_rootSceneNode = null;
 		_activeCamera = null;
-		_cameras = new Array<Camera>();
+		_cameras = new Array<ICamera>();
         _isEnabled = true;
         _updateOrder = 0;
 	}
@@ -82,7 +82,7 @@ class SceneManager extends APlugin implements ISceneManager
 	 * @param camera
 	 * 		The camera which is to be added.
 	 */
-	public function addCamera(camera:Camera):Void
+	public function addCamera(camera:ICamera):Void
 	{
         if (camera == null)
         {
@@ -105,7 +105,7 @@ class SceneManager extends APlugin implements ISceneManager
 	 *
 	 * @return True if the camera was removed and false otherwise.
 	 */
-	public function removeCamera(camera:Camera):Bool
+	public function removeCamera(camera:ICamera):Bool
 	{
         if (camera == null) { return false; }
 		return _cameras.remove(camera);
@@ -129,7 +129,7 @@ class SceneManager extends APlugin implements ISceneManager
 	 */
 	public function removeAllCameras():Void
     {
-        var toRemove:Array<Camera> = _cameras.concat([]);
+        var toRemove:Array<ICamera> = _cameras.concat([]);
         for (camera in toRemove)
         {
             this.removeCamera(camera);
@@ -145,7 +145,7 @@ class SceneManager extends APlugin implements ISceneManager
 	 * @return The camera which is identified by the specified name. Null if the camera could not be
 	 * found.
 	 */
-	public function getCameraByName(name:String):Camera
+	public function getCameraByName(name:String):ICamera
 	{
         if (name == null || name == "") { return null; }
 
@@ -165,7 +165,7 @@ class SceneManager extends APlugin implements ISceneManager
 	 *
 	 * @return True if the collection has the specified camera and false otherwise.
 	 */
-	public function hasCamera(camera:Camera):Bool
+	public function hasCamera(camera:ICamera):Bool
     {
         return Lambda.has(_cameras, camera);
     }
@@ -191,7 +191,7 @@ class SceneManager extends APlugin implements ISceneManager
 	 */
 	public function setActiveCameraByName(name:String):Void
 	{
-		var camera:Camera = this.getCameraByName(name);
+		var camera:ICamera = this.getCameraByName(name);
 		if (camera != null) { this.activeCamera = camera; }
 	}
 
@@ -199,12 +199,35 @@ class SceneManager extends APlugin implements ISceneManager
     //{ Properties
     //--------------------------------------------------------------------------------------------//
 
+    /**
+     * Create a new scene node.
+     *
+     * @return The newly created scene node.
+     */
+    public function createSceneNode():ISceneNode
+    {
+        return new SceneNode(this);
+    }
+
+    /**
+     * Creates a new camera.
+     *
+     * @param name
+     *      The name of the new camera.
+     *
+     * @return The newly created camera.
+     */
+    public function createCamera(name:String):ICamera
+    {
+        return new Camera(this, name);
+    }
+
 	/**
 	 * The camera which is currently active.
 	 */
-	public var activeCamera(get, set):Camera;
-	private inline function get_activeCamera():Camera { return _activeCamera; }
-	private inline function set_activeCamera(camera:Camera):Camera {
+	public var activeCamera(get, set):ICamera;
+	private inline function get_activeCamera():ICamera { return _activeCamera; }
+	private inline function set_activeCamera(camera:ICamera):ICamera {
 		if (camera != null && Lambda.has(_cameras, camera)) {
             return _activeCamera = camera;
         }
@@ -217,8 +240,8 @@ class SceneManager extends APlugin implements ISceneManager
 	/**
 	 * The cameras being managed by the scene manager.
 	 */
-	public var cameras(get, never):Array<Camera>;
-	private inline function get_cameras():Array<Camera> { return _cameras;  }
+	public var cameras(get, never):Array<ICamera>;
+	private inline function get_cameras():Array<ICamera> { return _cameras;  }
 	
 	/**
 	 * Whether the scene manager is enabled.
@@ -237,9 +260,9 @@ class SceneManager extends APlugin implements ISceneManager
     /**
 	 * The scene node which contains the scene.
 	 */
-	public var rootSceneNode(get, never):SceneNode;
-	private inline function get_rootSceneNode():SceneNode { return _rootSceneNode; }
-	private inline function set_rootSceneNode(value:SceneNode):SceneNode
+	public var rootSceneNode(get, never):ISceneNode;
+	private inline function get_rootSceneNode():ISceneNode { return _rootSceneNode; }
+	private inline function set_rootSceneNode(value:ISceneNode):ISceneNode
 	{
 		return _rootSceneNode = value;
 	}

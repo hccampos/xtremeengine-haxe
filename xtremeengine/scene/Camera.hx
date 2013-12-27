@@ -1,14 +1,13 @@
 package xtremeengine.scene;
 
 import xtremeengine.scene.ISceneManager;
-import xtremeengine.INamed;
 
 /**
  * Simple camera used to position and scale the scene container.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Camera extends SceneNode implements INamed
+class Camera extends SceneNode implements ICamera
 {
     private var _name:String;
 

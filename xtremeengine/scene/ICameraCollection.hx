@@ -13,7 +13,7 @@ interface ICameraCollection
 	 * @param camera
 	 * 		The camera which is to be added.
 	 */
-	public function addCamera(camera:Camera):Void;
+	public function addCamera(camera:ICamera):Void;
 	
 	/**
 	 * Removes the specified camera from the collection.
@@ -23,7 +23,7 @@ interface ICameraCollection
 	 *
 	 * @return True if the camera was removed and false otherwise.
 	 */
-	public function removeCamera(camera:Camera):Bool;
+	public function removeCamera(camera:ICamera):Bool;
 
 	/**
 	 * Removes the camera which is identified by the specified name from the collection.
@@ -48,7 +48,7 @@ interface ICameraCollection
 	 *
 	 * @return The camera which is identified by the specified name.
 	 */
-	public function getCameraByName(name:String):Camera;
+	public function getCameraByName(name:String):ICamera;
 
     /**
 	 * Gets whether the collection has the specified camera.
@@ -58,7 +58,7 @@ interface ICameraCollection
 	 *
 	 * @return True if the collection has the specified camera and false otherwise.
 	 */
-	public function hasCamera(camera:Camera):Bool;
+	public function hasCamera(camera:ICamera):Bool;
 
    /**
 	 * Gets whether the collection has the specified camera.
@@ -73,5 +73,5 @@ interface ICameraCollection
     /**
 	 * The cameras that are in the collection.
 	 */
-	public var cameras(get, never):Array<Camera>;
+	public var cameras(get, never):Array<ICamera>;
 }

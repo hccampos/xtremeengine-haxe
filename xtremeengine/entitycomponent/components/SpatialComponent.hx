@@ -1,8 +1,8 @@
 package xtremeengine.entitycomponent.components;
 
+import xtremeengine.scene.ISceneNode;
 import xtremeengine.entitycomponent.EntityComponent;
 import xtremeengine.ICore;
-import xtremeengine.scene.SceneNode;
 
 /**
  * Default implementation of the ISpatialComponent interface.
@@ -11,7 +11,7 @@ import xtremeengine.scene.SceneNode;
  */
 class SpatialComponent extends EntityComponent implements ISpatialComponent
 {
-    private var _sceneNode:SceneNode;
+    private var _sceneNode:ISceneNode;
 
     /**
      * Initializes a new spatial component instance.
@@ -25,7 +25,7 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent
     {
         super(core, name);
 
-        _sceneNode = new SceneNode(core);
+        _sceneNode = core.sceneManager.createSceneNode();
     }
 
     /**
@@ -49,6 +49,6 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent
     /**
      * The scene node which contains the position, rotation and scale of an entity.
      */
-    public var sceneNode(get, never):SceneNode;
-    private inline function get_sceneNode():SceneNode { return _sceneNode; }
+    public var sceneNode(get, never):ISceneNode;
+    private inline function get_sceneNode():ISceneNode { return _sceneNode; }
 }

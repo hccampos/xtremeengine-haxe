@@ -1,7 +1,7 @@
 package xtremeengine.entitycomponent.components;
 
+import xtremeengine.scene.ISceneNode;
 import xtremeengine.entitycomponent.IEntityComponent;
-import xtremeengine.scene.SceneNode;
 
 /**
  * Interface which defines a spatial component.
@@ -15,5 +15,5 @@ interface ISpatialComponent extends IEntityComponent
     /**
      * The scene node which contains the position, rotation and scale of an entity.
      */
-    public var sceneNode(get, never):SceneNode;
+    public var sceneNode(get, never):ISceneNode;
 }
