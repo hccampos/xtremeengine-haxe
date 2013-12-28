@@ -2,14 +2,14 @@ package xtremeengine.scene;
 
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
-import xtremeengine.APlugin;
+import xtremeengine.Plugin;
 
 /**
  * Default implementation of the ISceneManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SceneManager extends APlugin implements ISceneManager
+class SceneManager extends Plugin implements ISceneManager
 {
 	private var _rootSceneNode:ISceneNode;
 	private var _activeCamera:ICamera;

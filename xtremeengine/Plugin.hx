@@ -6,7 +6,7 @@ package xtremeengine;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class APlugin extends CoreObject implements IPlugin
+class Plugin extends CoreObject implements IPlugin
 {
 	private var _name:String;
     private var _isInitialized:Bool;

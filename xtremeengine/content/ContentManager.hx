@@ -1,13 +1,13 @@
 package xtremeengine.content;
 
 import xtremeengine.ICore;
-import xtremeengine.APlugin;
+import xtremeengine.Plugin;
 
 /**
  * ...
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class ContentManager extends APlugin implements IContentManager
+class ContentManager extends Plugin implements IContentManager
 {
     private var _formats:Array<String>;
 

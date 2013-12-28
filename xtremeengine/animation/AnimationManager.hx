@@ -2,14 +2,14 @@ package xtremeengine.animation;
 
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
-import xtremeengine.APlugin;
+import xtremeengine.Plugin;
 
 /**
  * Default implementation of the IAnimationManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class AnimationManager extends APlugin implements IAnimationManager
+class AnimationManager extends Plugin implements IAnimationManager
 {
     private var _animations:Array<IAnimation>;
     private var _isEnabled:Bool;

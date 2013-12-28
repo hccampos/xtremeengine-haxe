@@ -2,14 +2,14 @@ package xtremeengine.entitycomponent;
 
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
-import xtremeengine.APlugin;
+import xtremeengine.Plugin;
 
 /**
  * Default implementation of the IEntityManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class EntityManager extends APlugin implements IEntityManager
+class EntityManager extends Plugin implements IEntityManager
 {
     private var _entities:Array<IEntity>;
     private var _isEnabled:Bool;

@@ -1,13 +1,13 @@
 package xtremeengine.screens;
 
-import xtremeengine.APlugin;
+import xtremeengine.Plugin;
 
 /**
  * Default implementation of the IScreenManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class ScreenManager extends APlugin implements IScreenManager
+class ScreenManager extends Plugin implements IScreenManager
 {
     private var _screens:Array<IScreen>;
     private var _screensToUpdate:Array<IScreen>;
