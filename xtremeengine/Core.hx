@@ -421,8 +421,5 @@ class Core extends EventDispatcher implements ICore {
     //}
     //--------------------------------------------------------------------------------------------//
 
-    public static function main():Void {
-        var screenManager:IScreenManager = new ScreenManager();
-        var screen:IScreen = new Screen(screenManager);
-    }
+    public static function main():Void {}
 }
