@@ -1,5 +1,6 @@
 package xtremeengine.animation;
 
+import promhx.Promise;
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
 import xtremeengine.Plugin;
@@ -9,8 +10,7 @@ import xtremeengine.Plugin;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class AnimationManager extends Plugin implements IAnimationManager
-{
+class AnimationManager extends Plugin implements IAnimationManager {
     private var _animations:Array<IAnimation>;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;
@@ -25,8 +25,7 @@ class AnimationManager extends Plugin implements IAnimationManager
      * @param name
      *      The name of the animation manager.
      */
-    public function new(core:ICore, name:String):Void
-    {
+    public function new(core:ICore, name:String):Void {
         super(core, name);
 
         _animations = new Array<IAnimation>();
@@ -42,10 +41,8 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 * Called before the plugin is removed from the core object or when the core object is about to
 	 * be destroyed. The plugin should destroy any resources it may have created.
 	 */
-	public override function destroy():Void
-    {
-        for (animation in _animations)
-        {
+	public override function destroy():Void {
+        for (animation in _animations) {
             animation.stop();
         }
 
@@ -60,23 +57,19 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-    {
+	public function update(elapsedMillis:Float):Void {
         var toRemove:Array<IAnimation> = new Array<IAnimation>();
 
-        for (animation in _animations)
-        {
+        for (animation in _animations) {
             animation.animationStep(elapsedMillis);
 
-            if (animation.isComplete && animation.removeOnCompletion)
-            {
+            if (animation.isComplete && animation.removeOnCompletion) {
                 toRemove.push(animation);
             }
         }
 
         // Remove all the animations that are complete and marked for removal after completion.
-        for (animation in toRemove)
-        {
+        for (animation in toRemove) {
             this.removeAnimation(animation);
         }
     }
@@ -84,10 +77,8 @@ class AnimationManager extends Plugin implements IAnimationManager
     /**
 	 * Plays all the animations.
 	 */
-	public function playAll():Void
-    {
-        for (animation in _animations)
-        {
+	public function playAll():Void {
+        for (animation in _animations) {
             animation.play();
         }
     }
@@ -95,10 +86,8 @@ class AnimationManager extends Plugin implements IAnimationManager
 	/**
 	 * Stops all the animations.
 	 */
-	public function stopAll():Void
-    {
-        for (animation in _animations)
-        {
+	public function stopAll():Void {
+        for (animation in _animations) {
             animation.stop();
         }
     }
@@ -106,10 +95,8 @@ class AnimationManager extends Plugin implements IAnimationManager
 	/**
 	 * Pauses all the animations.
 	 */
-	public function pauseAll():Void
-    {
-        for (animation in _animations)
-        {
+	public function pauseAll():Void {
+        for (animation in _animations) {
             animation.pause();
         }
     }
@@ -117,10 +104,8 @@ class AnimationManager extends Plugin implements IAnimationManager
 	/**
 	 * Resumes all the animations.
 	 */
-	public function resumeAll():Void
-    {
-        for (animation in _animations)
-        {
+	public function resumeAll():Void {
+        for (animation in _animations) {
             animation.resume();
         }
     }
@@ -128,10 +113,8 @@ class AnimationManager extends Plugin implements IAnimationManager
 	/**
 	 * Restarts all the animations.
 	 */
-	public function restartAll():Void
-    {
-        for (animation in _animations)
-        {
+	public function restartAll():Void {
+        for (animation in _animations) {
             animation.restart();
         }
     }
@@ -142,8 +125,7 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 * @param animation
 	 * 		The animation which is to be added.
 	 */
-	public function addAnimation(animation:IAnimation):Void
-    {
+	public function addAnimation(animation:IAnimation):Void {
         if (animation == null) { throw new Error("Trying to add a null animation."); }
         if (Lambda.has(_animations, animation)) {
             throw new Error("Trying to add an animation that has already been added to the manager.");
@@ -160,8 +142,7 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 *
 	 * @return True if the animation was removed and false otherwise.
 	 */
-	public function removeAnimation(animation:IAnimation):Bool
-    {
+	public function removeAnimation(animation:IAnimation):Bool {
         if (animation == null) { return false; }
         return _animations.remove(animation);
     }
@@ -174,19 +155,16 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 *
 	 * @return True if the animation was removed and false otherwise.
 	 */
-	public function removeAnimationByName(name:String):Bool
-    {
+	public function removeAnimationByName(name:String):Bool {
         return this.removeAnimation(this.getAnimationByName(name));
     }
 	
 	/**
 	 * Removes all the animations from the manager.
 	 */
-	public function removeAllAnimations():Void
-    {
+	public function removeAllAnimations():Void {
         var toRemove:Array<IAnimation> = _animations.concat([]);
-        for (animation in toRemove)
-        {
+        for (animation in toRemove) {
             this.removeAnimation(animation);
         }
     }
@@ -199,12 +177,10 @@ class AnimationManager extends Plugin implements IAnimationManager
      *
      * @return The animation that has the specified name or null if the animation can't be found.
      */
-    public function getAnimationByName(name:String):IAnimation
-    {
+    public function getAnimationByName(name:String):IAnimation {
         if (name == null || name == "") { return null; }
 
-        for (animation in _animations)
-        {
+        for (animation in _animations) {
             if (animation.name == name) { return animation; }
         }
 
@@ -219,8 +195,7 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 *
 	 * @return True if the manager has the specified animation and false otherwise.
 	 */
-	public function hasAnimation(animation:IAnimation):Bool
-    {
+	public function hasAnimation(animation:IAnimation):Bool {
         return Lambda.has(_animations, animation);
     }
 
@@ -232,8 +207,7 @@ class AnimationManager extends Plugin implements IAnimationManager
 	 *
 	 * @return True if the collection has the specified animation and false otherwise.
 	 */
-	public function hasAnimationNamed(name:String):Bool
-    {
+	public function hasAnimationNamed(name:String):Bool {
         return this.getAnimationByName(name) != null;
     }
 

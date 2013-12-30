@@ -11,8 +11,7 @@ import xtremeengine.utils.Vec2;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SceneNode implements ISceneNode
-{
+class SceneNode implements ISceneNode {
     private var _sceneManager:ISceneManager;
     private var _parent:ISceneNode;
     private var _children:Array<ISceneNode>;
@@ -28,8 +27,7 @@ class SceneNode implements ISceneNode
      * @param context
      *      The context which is to be wrapped by the scene node.
      */
-    public function new(sceneManager:ISceneManager, ?context:Context):Void
-    {
+    public function new(sceneManager:ISceneManager, ?context:Context):Void {
         _sceneManager = sceneManager;
         _parent = null;
         _children = new Array<ISceneNode>();
@@ -46,8 +44,7 @@ class SceneNode implements ISceneNode
      *
      * @return The new scene node.
      */
-    public function createChild():ISceneNode
-    {
+    public function createChild():ISceneNode {
         var newNode:ISceneNode = this.sceneManager.createSceneNode();
         this.addChild(newNode);
         return newNode;
@@ -59,8 +56,7 @@ class SceneNode implements ISceneNode
      * @param child
      *      The scene node which is to be added.
      */
-    public function addChild(child:ISceneNode):Void
-    {
+    public function addChild(child:ISceneNode):Void {
         // Make sure the scene manager of the child is the same as our scene manager. This way we
         // ensure that scene nodes belonging to different scene managers are not mixed.
         if (child.sceneManager != this.sceneManager) {
@@ -94,8 +90,7 @@ class SceneNode implements ISceneNode
      *
      * @return True if the scene node was removed and false otherwise.
      */
-    public function removeChild(child:ISceneNode):Bool
-    {
+    public function removeChild(child:ISceneNode):Bool {
         if (child.parent != this) { return false; }
 
         var result:Bool = _children.remove(child);
@@ -112,12 +107,10 @@ class SceneNode implements ISceneNode
     /**
      * Removes all the descendants of the scene node.
      */
-    public function removeDescendants():Void
-    {
+    public function removeDescendants():Void {
         var child:SceneNode = null;
 
-        while ((child = cast _children.pop()) != null)
-        {
+        while ((child = cast _children.pop()) != null) {
             child.removeDescendants();
             _context.removeChild(child._context);
             child._parent = null;
@@ -129,8 +122,7 @@ class SceneNode implements ISceneNode
      *
      * @return True if the scene node was removed and false otherwise.
      */
-    public function remove():Bool
-    {
+    public function remove():Bool {
         if (_parent == null) { return false; }
 
         var result:Bool = _parent.removeChild(this);
@@ -147,8 +139,7 @@ class SceneNode implements ISceneNode
      *
      * @return True if the specified scene node is a child of this scene node and false otherwise.
      */
-    public function contains(child:ISceneNode):Bool
-    {
+    public function contains(child:ISceneNode):Bool {
         if (child == null) { return false; }
 
         return Lambda.has(_children, child);
@@ -184,10 +175,8 @@ class SceneNode implements ISceneNode
 	 */
 	public var position(get, set):Vec2;
 	private inline function get_position():Vec2 { return new Vec2(_context.x, _context.y); }
-	private inline function set_position(value:Vec2):Vec2
-    {
-        if (value != null)
-        {
+	private inline function set_position(value:Vec2):Vec2 {
+        if (value != null) {
             _context.x = value.x;
             _context.y = value.y;
         }
@@ -214,10 +203,8 @@ class SceneNode implements ISceneNode
 	 */
 	public var scale(get, set):Vec2;
 	private inline function get_scale():Vec2 { return new Vec2(_context.x, _context.y); }
-	private inline function set_scale(value:Vec2):Vec2
-    {
-        if (value != null)
-        {
+	private inline function set_scale(value:Vec2):Vec2 {
+        if (value != null) {
             _context.scaleX = value.x;
             _context.scaleY = value.y;
         }

@@ -1,5 +1,6 @@
 package xtremeengine.entitycomponent;
 
+import promhx.Promise;
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
 import xtremeengine.Plugin;
@@ -9,8 +10,7 @@ import xtremeengine.Plugin;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class EntityManager extends Plugin implements IEntityManager
-{
+class EntityManager extends Plugin implements IEntityManager {
     private var _entities:Array<IEntity>;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;
@@ -25,8 +25,7 @@ class EntityManager extends Plugin implements IEntityManager
      * @param name
      *      The name of the entity manager.
      */
-    public function new(core:ICore, name:String):Void
-    {
+    public function new(core:ICore, name:String):Void {
         super(core, name);
         _entities = new Array<IEntity>();
         _isEnabled = true;
@@ -41,10 +40,8 @@ class EntityManager extends Plugin implements IEntityManager
 	 * Called before the plugin is removed from the core object or when the core object is about to
 	 * be destroyed. The plugin should destroy any resources it may have created.
 	 */
-	public override function destroy():Void
-    {
-        for (entity in _entities)
-        {
+	public override function destroy():Void {
+        for (entity in _entities) {
             entity.removeAllComponents();
         }
 
@@ -59,10 +56,8 @@ class EntityManager extends Plugin implements IEntityManager
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-    {
-        for (entity in _entities)
-        {
+	public function update(elapsedMillis:Float):Void {
+        for (entity in _entities) {
             if (entity.isEnabled) { entity.update(elapsedMillis); }
         }
     }
@@ -73,8 +68,7 @@ class EntityManager extends Plugin implements IEntityManager
 	 * @param entity
 	 * 		The entity which is to be added.
 	 */
-	public function addEntity(entity:IEntity):Void
-    {
+	public function addEntity(entity:IEntity):Void {
         if (entity == null) { throw new Error("Trying to add a null entity."); }
         if (this.hasEntity(entity)) {
 			throw new Error("Trying to add an entity that has already been added to the entity manager.");
@@ -91,8 +85,7 @@ class EntityManager extends Plugin implements IEntityManager
 	 *
 	 * @return True if the entity was removed and false otherwise.
 	 */
-	public function removeEntity(entity:IEntity):Bool
-    {
+	public function removeEntity(entity:IEntity):Bool {
         if (entity == null) { return false; }
         return _entities.remove(entity);
     }
@@ -105,19 +98,16 @@ class EntityManager extends Plugin implements IEntityManager
 	 *
 	 * @return True if the entity was removed and false otherwise.
 	 */
-	public function removeEntityByName(name:String):Bool
-    {
+	public function removeEntityByName(name:String):Bool {
         return this.removeEntity(this.getEntityByName(name));
     }
 	
     /**
 	 * Removes all the entities from the manager.
 	 */
-	public function removeAllEntities():Void
-    {
+	public function removeAllEntities():Void {
         var toRemove:Array<IEntity> = _entities.concat([]);
-        for (entity in toRemove)
-        {
+        for (entity in toRemove) {
             this.removeEntity(entity);
         }
     }
@@ -130,12 +120,10 @@ class EntityManager extends Plugin implements IEntityManager
 	 *
 	 * @return The entity which is identified by the specified name.
 	 */
-	public function getEntityByName(name:String):IEntity
-    {
+	public function getEntityByName(name:String):IEntity {
         if (name == null || name == "") { return null; }
 
-        for (entity in _entities)
-        {
+        for (entity in _entities) {
             if (entity.name == name) { return entity; }
         }
 
@@ -150,8 +138,7 @@ class EntityManager extends Plugin implements IEntityManager
 	 *
 	 * @return True if the manager has the specified entity and false otherwise.
 	 */
-	public function hasEntity(entity:IEntity):Bool
-    {
+	public function hasEntity(entity:IEntity):Bool {
         return Lambda.has(_entities, entity);
     }
 
@@ -163,8 +150,7 @@ class EntityManager extends Plugin implements IEntityManager
 	 *
 	 * @return True if the manager has the specified entity and false otherwise.
 	 */
-	public function hasEntityNamed(name:String):Bool
-    {
+	public function hasEntityNamed(name:String):Bool {
         return this.getEntityByName(name) != null;
     }
 	

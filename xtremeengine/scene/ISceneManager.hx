@@ -8,8 +8,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ISceneManager extends IPlugin extends IUpdateable extends ICameraCollection
-{
+interface ISceneManager extends IPlugin extends IUpdateable extends ICameraCollection {
     /**
      * Create a new scene node.
      *

@@ -11,8 +11,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IScreen extends IInitializable extends ILoadable
-{
+interface IScreen extends ILoadable {
     /**
      * Allows the screen to run logic, such as updating the transition position.
      *
@@ -20,10 +19,19 @@ interface IScreen extends IInitializable extends ILoadable
      *      The time that has passed since the last update.
      * @param otherScreenHasFocus
      *      Whether another screen has got input focus.
-     * @param covered
+     * @param isCovered
      *      Whether the screen is covered by another screen.
      */
-    public function update(elapsedMillis:Float, otherScreenHasFocus:Bool, covered:Bool):Void;
+    public function update(elapsedMillis:Float, otherScreenHasFocus:Bool, isCovered:Bool):Void;
+
+    /**
+     * Allows the screen to handle user input. Unlike the update() method, this method is only
+     * called when the screen has focus.
+     *
+     * @param elapsedMillis
+     *      The time that has passed since the last update.
+     */
+    public function handleInput(elapsedMillis:Float):Void;
 
     /**
      * Tells the screen to go away. Unlike IScreenManager.removeScreen(), which instantly kills the

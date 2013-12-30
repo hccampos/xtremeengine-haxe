@@ -8,8 +8,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IContentManager extends IPlugin
-{
+interface IContentManager extends IPlugin {
     /**
      * Gets whether assets of the specified format can be loaded.
      *

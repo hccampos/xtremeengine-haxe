@@ -8,8 +8,7 @@ import flash.events.EventDispatcher;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class CoreObject extends EventDispatcher implements ICoreObject
-{
+class CoreObject extends EventDispatcher implements ICoreObject {
 	private var _core:ICore;
 
 	/**
@@ -18,13 +17,10 @@ class CoreObject extends EventDispatcher implements ICoreObject
 	 * @param core
 	 * 		The core object to which the object being created belongs.
 	 */
-	public function new(core:ICore):Void
-	{
+	public function new(core:ICore):Void {
         super();
 
-		if (core == null) {
-			throw new Error("Null Core object.");
-		}
+		if (core == null) { throw new Error("Null Core object."); }
 		
 		_core = core;
 	}

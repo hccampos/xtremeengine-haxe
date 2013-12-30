@@ -4,8 +4,7 @@ package xtremeengine.entitycomponent;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IEntityCollection
-{
+interface IEntityCollection {
     /**
 	 * Adds the specified entity to the collection.
 	 *

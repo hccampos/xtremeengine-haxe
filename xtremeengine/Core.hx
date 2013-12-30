@@ -1,5 +1,6 @@
 package xtremeengine;
 
+import promhx.Promise;
 import xtremeengine.animation.AnimationManager;
 import xtremeengine.animation.IAnimationManager;
 import xtremeengine.content.ContentManager;
@@ -16,6 +17,12 @@ import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
 import xtremeengine.scene.SceneManager;
 import flash.events.EventDispatcher;
+import xtremeengine.screens.IScreen;
+import xtremeengine.screens.IScreenManager;
+import xtremeengine.screens.Screen;
+import xtremeengine.screens.ScreenManager;
+import xtremeengine.utils.PromiseUtils;
+import xtremeengine.utils.Utils;
 
 /**
  * Main class of XtremeEngine. It is responsible for managing all the managers of the engine and
@@ -23,8 +30,7 @@ import flash.events.EventDispatcher;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Core extends EventDispatcher implements ICore
-{
+class Core extends EventDispatcher implements ICore {
     private var _context:Context;
     private var _contentManager:IContentManager;
 	private var _sceneManager:ISceneManager;
@@ -47,8 +53,7 @@ class Core extends EventDispatcher implements ICore
      *      The context where all the visual elements that belong to this Core object will be
      *      contained.
 	 */
-	public function new(context:Context):Void
-	{
+	public function new(context:Context):Void {
         super();
 
         if (context == null) { throw new Error("To create a Core object, a context is required."); }
@@ -75,94 +80,104 @@ class Core extends EventDispatcher implements ICore
 	
 	/**
 	 * Initializes the core and all its plugins.
+     *
+     * @return A promise which is resolved when the core object has been initialized.
 	 */
-	public function initialize():Void
-	{
-        if (_isInitialized) { return; }
+	public function initialize():Promise<Bool> {
+        if (_isInitialized) { return PromiseUtils.resolved(true); }
 
         _contentManager = new ContentManager(this, "contentManager");
 		_sceneManager = new SceneManager(this, "sceneManager");
+        _physicsManager = new NapePhysicsManager(this, "physicsManager");
 		_entityManager = new EntityManager(this, "entityManager");
 		_animationManager = new AnimationManager(this, "animationManager");
 		_guiManager = new GuiManager(this, "guiManager");
-        _physicsManager = new NapePhysicsManager(this, "physicsManager");
 		
         this.addPlugin(_contentManager);
-		this.addPlugin(_sceneManager);
+        this.addPlugin(_sceneManager);
         this.addPlugin(_physicsManager);
         this.addPlugin(_entityManager);
         this.addPlugin(_animationManager);
         this.addPlugin(_guiManager);
 
-        // Initialize all the plugins.
-        for (plugin in _plugins)
-        {
+        for (plugin in _plugins) {
             plugin.initialize();
         }
 
-        // Load all the plugins.
-        this.load();
-
-        _isInitialized = true;
+        return this.load().then(function (value):Bool {
+            _isInitialized = true;
+            return true;
+        });
 	}
 
     /**
 	 * Releases any resources that were aquired by the core object.
+     *
+     * @return A promise which is resolved when the core object has been destroyed.
 	 */
-	public function destroy():Void
-	{
-        if (!_isInitialized) { return; }
+	public function destroy():Promise<Bool> {
+        if (!_isInitialized) { return PromiseUtils.resolved(true); }
 
-        // Unload all the plugins.
-        this.unload();
+        for (plugin in _plugins) {
+            plugin.destroy();
+        }
 
-        // Destroy all the plugins.
-		for (plugin in _plugins)
-		{
-			plugin.destroy();
-		}
+        return this.unload().then(function (value):Bool {
+            _contentManager = null;
+            _sceneManager = null;
+            _physicsManager = null;
+            _entityManager = null;
+            _animationManager = null;
+            _guiManager = null;
+            _plugins = new Array<IPlugin>();
+            _updateablePlugins = new Array<IUpdateable>();
+            _loadablePlugins = new Array<ILoadable>();
 
-        _contentManager = null;
-		_sceneManager = null;
-		_physicsManager = null;
-		_entityManager = null;
-		_animationManager = null;
-		_guiManager = null;
-		_plugins = new Array<IPlugin>();
-		_updateablePlugins = new Array<IUpdateable>();
-        _loadablePlugins = new Array<ILoadable>();
-		
-		_isInitialized = false;
+            _isInitialized = false;
+            return true;
+        });
 	}
 
     /**
      * Loads all the loadable plugins.
+     *
+     * @return A promise which is resolved when all the plugins of added to the core have been
+     * loaded.
      */
-    public function load():Void
-    {
-        if (_isLoaded) { return; }
+    public function load():Promise<Bool> {
+        if (_isLoaded) { return PromiseUtils.resolved(true); }
 
-        for (loadablePlugin in _loadablePlugins)
-        {
-            loadablePlugin.load();
+        // Add all the promises to an array so we can wait for all the plugins to be loaded.
+        var promises:Array<Promise<Bool>> = new Array<Promise<Bool>>();
+        for (loadablePlugin in _loadablePlugins) {
+            promises.push(loadablePlugin.load());
         }
 
-        _isLoaded = true;
+        return Promise.whenAll(promises).then(function (values):Bool {
+            _isLoaded = true;
+            return true;
+        });
     }
 
     /**
      * Unloads all the loadable plugins.
+     *
+     * @return A promise which is resolved when all the plugins added to the core have been
+     * unloaded.
      */
-    public function unload():Void
-    {
-        if (!_isLoaded) { return; }
+    public function unload():Promise<Bool> {
+        if (!_isLoaded) { return PromiseUtils.resolved(true); }
 
-        for (loadablePlugin in _loadablePlugins)
-        {
-            loadablePlugin.unload();
+        // Add all the promises to an array so we can wait for all the plugins to be loaded.
+        var promises:Array<Promise<Bool>> = new Array<Promise<Bool>>();
+        for (loadablePlugin in _loadablePlugins) {
+            promises.push(loadablePlugin.unload());
         }
 
-        _isLoaded = false;
+        return Promise.whenAll(promises).then(function (values):Bool {
+            _isLoaded = false;
+            return true;
+        });
     }
 
     /**
@@ -171,10 +186,8 @@ class Core extends EventDispatcher implements ICore
      * @param elapsedMillis
      *      The time that has passed since the last update.
      */
-    public function update(elapsedMillis:Float):Void
-    {
-        for (plugin in _updateablePlugins)
-        {
+    public function update(elapsedMillis:Float):Void {
+        for (plugin in _updateablePlugins) {
             if (plugin.isEnabled) { plugin.update(elapsedMillis); }
         }
     }
@@ -184,17 +197,19 @@ class Core extends EventDispatcher implements ICore
      *
      * @param plugin
      *      The plugin which is to be installed.
+     *
+     * @return A promise which is resolved when the plugin has been installed.
      */
-    public function installPlugin(plugin:IPlugin):Void
-    {
-        if (plugin == null) { throw new Error("Intalling null plugin."); }
-        this.addPlugin(plugin);
-        if (this.isInitialized) { plugin.initialize(); }
+    public function installPlugin(plugin:IPlugin):Promise<Bool> {
+        if (plugin == null) { return PromiseUtils.rejected(new Error("Intalling null plugin.")); }
 
-        if (this.isLoaded && Std.is(plugin, ILoadable))
-        {
-            var loadablePlugin:ILoadable = cast plugin;
-            loadablePlugin.load();
+        this.addPlugin(plugin);
+
+        if (this.isInitialized) {
+            plugin.initialize();
+            return this.loadPlugin(plugin);
+        } else {
+            return PromiseUtils.resolved(true);
         }
     }
 
@@ -203,20 +218,18 @@ class Core extends EventDispatcher implements ICore
      *
      * @param plugin
      *      The plugin which is to be uninstalled.
+     *
+     * @return A promise which is resolved when the plugin has been uninstalled.
      */
-    public function uninstallPlugin(plugin:IPlugin):Void
-    {
-        if (plugin == null) { throw new Error("Uninstalling null plugin."); }
+    public function uninstallPlugin(plugin:IPlugin):Promise<Bool> {
+        if (plugin == null) { return PromiseUtils.rejected(new Error("Uninstalling null plugin.")); }
+        if (!Lambda.has(_plugins, plugin)) { return PromiseUtils.resolved(false); }
 
-        if (this.isLoaded && Std.is(plugin, ILoadable))
-        {
-            var loadablePlugin:ILoadable = cast plugin;
-            loadablePlugin.unload();
-        }
-
-        plugin.destroy();
-
-        this.removePlugin(plugin);
+        return this.unloadPlugin(plugin).then(function (result):Bool {
+            plugin.destroy();
+            this.removePlugin(plugin);
+            return true;
+        });
     }
 
 	/**
@@ -224,13 +237,10 @@ class Core extends EventDispatcher implements ICore
 	 * the first one to match (same type, subclass, implements interface, etc) the specified type
 	 * parameter T.
 	 */
-	public function getPlugin<T: IPlugin>(?name:String, cls:Class<T>):T
-	{
-        for (plugin in _plugins)
-        {
+	public function getPlugin<T: IPlugin>(?name:String, cls:Class<T>):T {
+        for (plugin in _plugins) {
             var nameMatches:Bool = name == null ? true : plugin.name == name;
-            if (Std.is(plugin, cls) && nameMatches)
-            {
+            if (Std.is(plugin, cls) && nameMatches) {
                 var ret:T = cast plugin;
                 return ret;
             }
@@ -247,10 +257,8 @@ class Core extends EventDispatcher implements ICore
      *
      * @return The plugin which has the specified name.0
      */
-    public function getPluginByName(name:String):IPlugin
-    {
-        for (plugin in _plugins)
-        {
+    public function getPluginByName(name:String):IPlugin {
+        for (plugin in _plugins) {
             if (plugin.name == name) { return plugin; }
         }
 
@@ -265,17 +273,51 @@ class Core extends EventDispatcher implements ICore
     //--------------------------------------------------------------------------------------------//
 
     /**
+     * Loads a plugin but only if the plugin is ILoadable and if the core object hasn't been loaded
+     * yet.
+     *
+     * @param plugin
+     *      The plugin which is to be unloaded.
+     *
+     * @return A promise which is resolved when operation is complete.
+     */
+    private function loadPlugin(plugin:IPlugin):Promise<Bool> {
+        if (this.isLoaded && Std.is(plugin, ILoadable)) {
+            var loadablePlugin:ILoadable = cast plugin;
+            return loadablePlugin.load();
+        } else {
+            return PromiseUtils.resolved(true);
+        }
+    }
+
+    /**
+     * Unloads a plugin but only if the plugin is ILoadable and if the core object has already been
+     * loaded.
+     *
+     * @param plugin
+     *      The plugin which is to be unloaded.
+     *
+     * @return A promise which is resolved when operation is complete.
+     */
+    private function unloadPlugin(plugin:IPlugin):Promise<Bool> {
+         if (this.isLoaded && Std.is(plugin, ILoadable)) {
+            var loadablePlugin:ILoadable = cast plugin;
+            return loadablePlugin.unload();
+        } else {
+            return PromiseUtils.resolved(true);
+        }
+    }
+
+    /**
      * Adds a plugin to the engine.
      *
      * @param plugin
      *      The plugin which is to be added to the engine.
      */
-    private function addPlugin(plugin:IPlugin):Void
-    {
+    private function addPlugin(plugin:IPlugin):Void {
         _plugins.push(plugin);
 
-        if (Std.is(plugin, IUpdateable))
-        {
+        if (Std.is(plugin, IUpdateable)) {
             var updateablePlugin:IUpdateable = cast plugin;
             _updateablePlugins.push(updateablePlugin);
             _updateablePlugins.sort(function (a:IUpdateable, b:IUpdateable) {
@@ -284,8 +326,7 @@ class Core extends EventDispatcher implements ICore
             });
         }
 
-        if (Std.is(plugin, ILoadable))
-        {
+        if (Std.is(plugin, ILoadable)) {
             var loadablePlugin:ILoadable = cast plugin;
             _loadablePlugins.push(loadablePlugin);
         }
@@ -299,19 +340,16 @@ class Core extends EventDispatcher implements ICore
      *
      * @return True if the plugin was removed and false otherwise.
      */
-    private function removePlugin(plugin:IPlugin):Bool
-    {
+    private function removePlugin(plugin:IPlugin):Bool {
         if (plugin == null) { return false; }
         if (!_plugins.remove(plugin)) { return false; }
 
-        if (Std.is(plugin, IUpdateable))
-        {
+        if (Std.is(plugin, IUpdateable)) {
             var updateablePlugin:IUpdateable = cast plugin;
             _updateablePlugins.remove(updateablePlugin);
         }
 
-        if (Std.is(plugin, ILoadable))
-        {
+        if (Std.is(plugin, ILoadable)) {
             var loadablePlugin:ILoadable = cast plugin;
             _loadablePlugins.remove(loadablePlugin);
         }
@@ -383,7 +421,8 @@ class Core extends EventDispatcher implements ICore
     //}
     //--------------------------------------------------------------------------------------------//
 
-    public static function main():Void
-    {
+    public static function main():Void {
+        var screenManager:IScreenManager = new ScreenManager();
+        var screen:IScreen = new Screen(screenManager);
     }
 }

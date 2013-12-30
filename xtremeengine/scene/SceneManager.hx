@@ -9,8 +9,7 @@ import xtremeengine.Plugin;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SceneManager extends Plugin implements ISceneManager
-{
+class SceneManager extends Plugin implements ISceneManager {
 	private var _rootSceneNode:ISceneNode;
 	private var _activeCamera:ICamera;
 	private var _cameras:Array<ICamera>;
@@ -25,8 +24,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 * @param name
 	 * 		The name of the scene manager.
 	 */
-	public function new(core:ICore, name:String):Void
-	{
+	public function new(core:ICore, name:String):Void {
 		super(core, name);
 		
 		_rootSceneNode = null;
@@ -39,8 +37,7 @@ class SceneManager extends Plugin implements ISceneManager
 	/**
 	 * Initializes the scene manager.
 	 */
-	public override function initialize():Void
-	{
+	public override function initialize():Void {
         super.initialize();
 
         _rootSceneNode = new SceneNode(this, this.core.context);
@@ -49,8 +46,7 @@ class SceneManager extends Plugin implements ISceneManager
 	/**
 	 * Destroys the scene manager and any resources aquired by it.
 	 */
-	public override function destroy():Void
-	{
+	public override function destroy():Void {
         rootSceneNode.removeDescendants();
 
 		_rootSceneNode = null;
@@ -66,8 +62,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-	{
+	public function update(elapsedMillis:Float):Void {
 		if (_activeCamera != null) {
 			_rootSceneNode.rotation = -_activeCamera.rotation;
 			_rootSceneNode.scale = _activeCamera.scale;
@@ -82,15 +77,12 @@ class SceneManager extends Plugin implements ISceneManager
 	 * @param camera
 	 * 		The camera which is to be added.
 	 */
-	public function addCamera(camera:ICamera):Void
-	{
-        if (camera == null)
-        {
+	public function addCamera(camera:ICamera):Void {
+        if (camera == null) {
             throw new Error("Trying to add a null camera to the scene manager.");
         }
 
-        if (this.hasCamera(camera))
-        {
+        if (this.hasCamera(camera)) {
             throw new Error("Trying to add a camera which has already been added to the scene manager");
         }
 
@@ -105,8 +97,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 *
 	 * @return True if the camera was removed and false otherwise.
 	 */
-	public function removeCamera(camera:ICamera):Bool
-	{
+	public function removeCamera(camera:ICamera):Bool {
         if (camera == null) { return false; }
 		return _cameras.remove(camera);
 	}
@@ -119,19 +110,16 @@ class SceneManager extends Plugin implements ISceneManager
 	 *
 	 * @return True if the camera was removed and false otherwise.
 	 */
-	public function removeCameraByName(name:String):Bool
-	{
+	public function removeCameraByName(name:String):Bool {
 		return this.removeCamera(this.getCameraByName(name));
 	}
 
     /**
 	 * Removes all the cameras from the collection.
 	 */
-	public function removeAllCameras():Void
-    {
+	public function removeAllCameras():Void {
         var toRemove:Array<ICamera> = _cameras.concat([]);
-        for (camera in toRemove)
-        {
+        for (camera in toRemove) {
             this.removeCamera(camera);
         }
     }
@@ -145,12 +133,10 @@ class SceneManager extends Plugin implements ISceneManager
 	 * @return The camera which is identified by the specified name. Null if the camera could not be
 	 * found.
 	 */
-	public function getCameraByName(name:String):ICamera
-	{
+	public function getCameraByName(name:String):ICamera {
         if (name == null || name == "") { return null; }
 
-		for (camera in _cameras)
-		{
+		for (camera in _cameras) {
 			if (camera.name == name) { return camera; }
 		}
 		
@@ -165,8 +151,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 *
 	 * @return True if the collection has the specified camera and false otherwise.
 	 */
-	public function hasCamera(camera:ICamera):Bool
-    {
+	public function hasCamera(camera:ICamera):Bool {
         return Lambda.has(_cameras, camera);
     }
 
@@ -178,8 +163,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 *
 	 * @return True if the collection has the specified camera and false otherwise.
 	 */
-    public function hasCameraNamed(name:String):Bool
-    {
+    public function hasCameraNamed(name:String):Bool {
         return this.getCameraByName(name) != null;
     }
 
@@ -189,8 +173,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 * @param name
 	 * 		The name of the camera which is to be activated.
 	 */
-	public function setActiveCameraByName(name:String):Void
-	{
+	public function setActiveCameraByName(name:String):Void {
 		var camera:ICamera = this.getCameraByName(name);
 		if (camera != null) { this.activeCamera = camera; }
 	}
@@ -204,8 +187,7 @@ class SceneManager extends Plugin implements ISceneManager
      *
      * @return The newly created scene node.
      */
-    public function createSceneNode():ISceneNode
-    {
+    public function createSceneNode():ISceneNode {
         return new SceneNode(this);
     }
 
@@ -217,8 +199,7 @@ class SceneManager extends Plugin implements ISceneManager
      *
      * @return The newly created camera.
      */
-    public function createCamera(name:String):ICamera
-    {
+    public function createCamera(name:String):ICamera {
         return new Camera(this, name);
     }
 
@@ -230,9 +211,7 @@ class SceneManager extends Plugin implements ISceneManager
 	private inline function set_activeCamera(camera:ICamera):ICamera {
 		if (camera != null && Lambda.has(_cameras, camera)) {
             return _activeCamera = camera;
-        }
-		else
-        {
+        } else {
             return _activeCamera = null;
         }
 	}
@@ -262,8 +241,7 @@ class SceneManager extends Plugin implements ISceneManager
 	 */
 	public var rootSceneNode(get, never):ISceneNode;
 	private inline function get_rootSceneNode():ISceneNode { return _rootSceneNode; }
-	private inline function set_rootSceneNode(value:ISceneNode):ISceneNode
-	{
+	private inline function set_rootSceneNode(value:ISceneNode):ISceneNode {
 		return _rootSceneNode = value;
 	}
 

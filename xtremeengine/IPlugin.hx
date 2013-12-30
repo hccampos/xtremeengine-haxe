@@ -5,6 +5,4 @@ package xtremeengine;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPlugin extends ICoreObject extends INamed extends IInitializable
-{
-}
+interface IPlugin extends ICoreObject extends INamed extends IInitializable {}

@@ -7,8 +7,7 @@ import xtremeengine.animation.IInterpolator.IInterpolator;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class FloatLerpInterpolator implements IInterpolator<Float>
-{
+class FloatLerpInterpolator implements IInterpolator<Float> {
     public function new():Void {}
 
     /**
@@ -23,8 +22,7 @@ class FloatLerpInterpolator implements IInterpolator<Float>
      *
      * @return The interpolated value.
      */
-    public function interpolate(position:Float, initialValue:Float, finalValue:Float):Float
-    {
+    public function interpolate(position:Float, initialValue:Float, finalValue:Float):Float {
         return initialValue + position * (finalValue - initialValue);
     }
 }

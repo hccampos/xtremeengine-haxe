@@ -1,16 +1,17 @@
 package xtremeengine.screens;
 
+import promhx.Promise;
 import xtremeengine.Plugin;
+import xtremeengine.utils.PromiseUtils;
 
 /**
  * Default implementation of the IScreenManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class ScreenManager extends Plugin implements IScreenManager
-{
+class ScreenManager implements IScreenManager {
     private var _screens:Array<IScreen>;
-    private var _screensToUpdate:Array<IScreen>;
+    private var _isInitialized:Bool;
     private var _isLoaded:Bool;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;
@@ -23,10 +24,8 @@ class ScreenManager extends Plugin implements IScreenManager
      * @param name
      *      The name of the screen manager.
      */
-    public function new():Void
-    {
-        _screens = new Array<IScreen>();
-        _screensToUpdate = new Array<IScreen>();
+    public function new():Void {
+        _isInitialized = false;
         _isLoaded = false;
         _isEnabled = true;
         _updateOrder = 0;
@@ -37,14 +36,92 @@ class ScreenManager extends Plugin implements IScreenManager
     //--------------------------------------------------------------------------------------------//
 
     /**
+	 * Initializes the object.
+	 */
+	public function initialize():Void {
+        if (_isInitialized) { return; }
+        _screens = new Array<IScreen>();
+        _isInitialized = true;
+    }
+
+	/**
+	 * Called before the manager is destroyed.
+	 */
+	public function destroy():Void {
+        if (!_isInitialized) { return; }
+
+        this.unload();
+        _screens = new Array<IScreen>();
+
+        _isInitialized = false;
+    }
+
+    /**
+     * Loads any required resources required by the screen manager or any of the screens managed by
+     * it.
+     */
+    public function load():Promise<Bool> {
+        if (_isLoaded) { return PromiseUtils.resolved(true); }
+
+        var promises:Array<Promise<Bool>> = new Array<Promise<Bool>>();
+        for (screen in _screens) {
+            promises.push(screen.load());
+        }
+
+        return Promise.whenAll(promises).then(function (result):Bool {
+            _isLoaded = true;
+            return true;
+        });
+    }
+
+    /**
+     * Unloads any resources that may have been loaded by the screen manager.
+     */
+    public function unload():Promise<Bool> {
+        if (!_isLoaded) { return PromiseUtils.resolved(true); }
+
+        var promises:Array<Promise<Bool>> = new Array<Promise<Bool>>();
+        for (screen in _screens) {
+            promises.push(screen.unload());
+        }
+
+        return Promise.whenAll(promises).then(function (result):Bool {
+            _isLoaded = false;
+            return true;
+        });
+    }
+
+    /**
 	 * Updates each screen.
 	 *
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-    {
+	public function update(elapsedMillis:Float):Void {
+        // Make a copy of the master screen list, to avoid confusion if the process of updating one
+        // screen adds or removes others.
+        var toUpdate:Array<IScreen> = _screens.concat([]);
 
+        var otherScreenHasFocus = false;
+        var isCovered = false;
+
+        var screen:IScreen = null;
+        while ((screen = toUpdate.pop()) != null) {
+            screen.update(elapsedMillis, otherScreenHasFocus, isCovered);
+
+            if (screen.state == EScreenState.TransitionOn || screen.state == EScreenState.Active) {
+                // If this is the first screen that we come across we give a chance to handle input.
+                // The handleInput method won't be called for subsequent screens.
+                if (!otherScreenHasFocus) {
+                    screen.handleInput(elapsedMillis);
+                    otherScreenHasFocus = true;
+                }
+
+                // If the screen is not popup, we have to inform all the next screens that they are
+                // covered by it.
+                if (!screen.isPopup) { isCovered = true; }
+            }
+        }
     }
 
     /**
@@ -53,9 +130,11 @@ class ScreenManager extends Plugin implements IScreenManager
      * @param screen
      *      The screen which is to be added.
      */
-    public function addScreen(screen:IScreen):Void
-    {
-
+    public function addScreen(screen:IScreen):Promise<Bool> {
+        return screen.load().then(function (result):Bool {
+            _screens.push(screen);
+            return true;
+        });
     }
 
     /**
@@ -65,19 +144,31 @@ class ScreenManager extends Plugin implements IScreenManager
      *
      * @param screen
      *      The screen which is to be removed.
+     *
+     * @return True if the screen was removed and false otherwise.
      */
-    public function removeScreen(screen:IScreen):Bool
-    {
-        return true;
+    public function removeScreen(screen:IScreen):Promise<Bool> {
+        if (!this.hasScreen(screen)) { return PromiseUtils.resolved(false); }
+
+        return screen.unload().then(function (result):Bool {
+            return _screens.remove(screen);
+        });
     }
 
     /**
      * Removes all the screens from the collection.
-     * @return
      */
-    public function removeAllScreens():Void
-    {
+    public function removeAllScreens():Promise<Bool> {
+        var toRemove = _screens.concat([]);
 
+        var promises:Array<Promise<Bool>> = new Array<Promise<Bool>>();
+        for (screen in toRemove) {
+            promises.push(this.removeScreen(screen));
+        }
+
+        return PromiseUtils.sequence(promises).then(function (result):Bool {
+            return true;
+        });
     }
 
     /**
@@ -88,30 +179,8 @@ class ScreenManager extends Plugin implements IScreenManager
      *
      * @return True if the collection has the specified screen and false otherwise.
      */
-    public function hasScreen(screen:IScreen):Bool
-    {
-        return true;
-    }
-
-    /**
-     * Loads any required resources required by the screen manager or any of the screens managed by
-     * it.
-     */
-    public function load():Void
-    {
-        if (_isLoaded) { return; }
-
-        _isLoaded = true;
-    }
-
-    /**
-     * Unloads any resources that may have been loaded by the screen manager.
-     */
-    public function unload():Void
-    {
-        if (!_isLoaded) { return; }
-
-        _isLoaded = false;
+    public inline function hasScreen(screen:IScreen):Bool {
+        return Lambda.has(_screens, screen);
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -123,6 +192,12 @@ class ScreenManager extends Plugin implements IScreenManager
      */
     public var screens(get, never):Array<IScreen>;
     public inline function get_screens():Array<IScreen> { return _screens; }
+
+    /**
+     * Whether the screen manager has been initialized.
+     */
+    public var isInitialized(get, never):Bool;
+    private inline function get_isInitialized():Bool { return _isInitialized; }
 
     /**
      * Whether the screen manager has been loaded.

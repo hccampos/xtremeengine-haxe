@@ -1,19 +1,22 @@
 package xtremeengine.screens;
 
+import promhx.Promise;
+
 /**
  * Interface which defines a collection of screens.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IScreenCollection
-{
+interface IScreenCollection {
     /**
      * Adds the specified screen to the collection.
      *
      * @param screen
      *      The screen which is to be added.
+     *
+     * @return A promise which is resolved when the screen has been added and loaded.
      */
-    public function addScreen(screen:IScreen):Void;
+    public function addScreen(screen:IScreen):Promise<Bool>;
 
     /**
      * Removes the specified screen from the collection.
@@ -21,14 +24,16 @@ interface IScreenCollection
      * @param screen
      *      The screen which is to be removed.
      *
-     * @return True if the screen was removed and false otherwise.
+     * @return A promise which is resolved when the screen has been removed.
      */
-    public function removeScreen(screen:IScreen):Bool;
+    public function removeScreen(screen:IScreen):Promise<Bool>;
 
     /**
      * Removes all the screens from the collection.
+     *
+     * @return A promise which is resolved when all the promises have been removed.
      */
-    public function removeAllScreens():Void;
+    public function removeAllScreens():Promise<Bool>;
 
     /**
      * Gets whether the collection has the specified screen.

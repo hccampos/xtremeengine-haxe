@@ -7,8 +7,7 @@ import xtremeengine.animation.IEasingFunction;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class EaseInOutCubic implements IEasingFunction
-{
+class EaseInOutCubic implements IEasingFunction {
     public function new() { }
 
     /**
@@ -19,8 +18,7 @@ class EaseInOutCubic implements IEasingFunction
      *
      * @return The eased position of the animation.
      */
-    public inline function ease(position:Float):Float
-    {
+    public inline function ease(position:Float):Float {
         var square:Float = position * position;
         var cubic:Float = square * position;
         return -2 * cubic + 3 * square;

@@ -10,8 +10,7 @@ import flash.Lib;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class GuiManager extends Plugin implements IGuiManager
-{
+class GuiManager extends Plugin implements IGuiManager {
     private var _guiContainer:DisplayObjectContainer;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;
@@ -26,8 +25,7 @@ class GuiManager extends Plugin implements IGuiManager
      * @param name
      *      The name of the manager.
      */
-    public function new(core:ICore, name:String):Void
-    {
+    public function new(core:ICore, name:String):Void {
         super(core, name);
 
         _isEnabled = true;
@@ -41,8 +39,7 @@ class GuiManager extends Plugin implements IGuiManager
     /**
 	 * Initializes the GUI manager.
 	 */
-	public override function initialize():Void
-	{
+	public override function initialize():Void {
         super.initialize();
 
 		_guiContainer = new DisplayObjectContainer();
@@ -52,8 +49,7 @@ class GuiManager extends Plugin implements IGuiManager
     /**
 	 * Destroys the GUI manager and any resources aquired by it.
 	 */
-	public override function destroy():Void
-	{
+	public override function destroy():Void {
 		Lib.current.stage.removeChild(_guiContainer);
         _guiContainer = null;
 
@@ -66,9 +62,7 @@ class GuiManager extends Plugin implements IGuiManager
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-	{
-	}
+	public function update(elapsedMillis:Float):Void {}
 
     //}
     //--------------------------------------------------------------------------------------------//

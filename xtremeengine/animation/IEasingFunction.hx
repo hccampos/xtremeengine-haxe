@@ -7,8 +7,7 @@ package xtremeengine.animation;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IEasingFunction
-{
+interface IEasingFunction {
     /**
      * Function used to ease the animation.
      *

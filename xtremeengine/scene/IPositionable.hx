@@ -7,8 +7,7 @@ import xtremeengine.utils.Vec2;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPositionable
-{
+interface IPositionable {
     /**
      * The position of the object.
      */

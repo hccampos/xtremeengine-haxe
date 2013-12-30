@@ -10,8 +10,7 @@ import xtremeengine.entitycomponent.IEntityComponent;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ISpatialComponent extends IEntityComponent
-{
+interface ISpatialComponent extends IEntityComponent {
     /**
      * The scene node which contains the position, rotation and scale of an entity.
      */

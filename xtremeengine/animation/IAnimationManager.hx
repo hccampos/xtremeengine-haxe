@@ -10,8 +10,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IAnimationManager extends IPlugin extends IAnimationCollection extends IUpdateable
-{
+interface IAnimationManager extends IPlugin extends IAnimationCollection extends IUpdateable {
 	/**
 	 * Plays all the animations.
 	 */

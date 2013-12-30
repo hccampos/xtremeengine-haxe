@@ -4,8 +4,7 @@ package xtremeengine;
  * ...
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface INamed
-{
+interface INamed {
     /**
 	 * Gets the name of the object.
 	 */

@@ -8,8 +8,7 @@ import xtremeengine.INamed;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IAnimation extends INamed
-{
+interface IAnimation extends INamed {
 	/**
 	 * Updates the animation state.
 	 *

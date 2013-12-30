@@ -8,6 +8,8 @@
     "releasenote": "Initial development release - WIP",
     "contributors": [ "hccampos" ],
     "dependencies": {
-        "openfl": ""
+        "openfl": "",
+        "promhx": "",
+        "msignal": ""
     }
 }

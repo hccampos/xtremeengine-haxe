@@ -10,8 +10,7 @@ import xtremeengine.utils.IPropertyUpdater.IPropertyUpdater;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class PropertyAnimation<T> implements IAnimation
-{
+class PropertyAnimation<T> implements IAnimation {
     private var _name:String;
     private var _propertyUpdater:IPropertyUpdater<T>;
     private var _equalityComparer:IEqualityComparer<T>;
@@ -58,8 +57,7 @@ class PropertyAnimation<T> implements IAnimation
         duration:Float,
         removeOnCompletion = false,
         easingFunction:IEasingFunction = null,
-        interpolator:IInterpolator<T> = null)
-    {
+        interpolator:IInterpolator<T> = null) {
         _name = name;
 
         _propertyUpdater = propertyUpdater;
@@ -89,13 +87,11 @@ class PropertyAnimation<T> implements IAnimation
 	 * @param elapsedMillis
 	 * 		The time that has passed since the last animation step.
 	 */
-	public function animationStep(elapsedMillis:Float):Void
-    {
+	public function animationStep(elapsedMillis:Float):Void {
         if (!this.isPlaying) { return; }
 
         this.position += elapsedMillis / this.duration;
-        if (this.isComplete)
-        {
+        if (this.isComplete) {
             this.position = 1.0;
             this.pause();
         }
@@ -104,10 +100,8 @@ class PropertyAnimation<T> implements IAnimation
 	/**
 	 * Plays the animation from the beginning, if it is not playing.
 	 */
-	public function play():Void
-    {
-        if (!_isPlaying)
-        {
+	public function play():Void {
+        if (!_isPlaying) {
             _isPlaying = true;
             this.position = 0.0;
         }
@@ -116,10 +110,8 @@ class PropertyAnimation<T> implements IAnimation
 	/**
 	 * Stops the animation and goes to the beginning.
 	 */
-	public function stop():Void
-    {
-        if (_isPlaying)
-        {
+	public function stop():Void {
+        if (_isPlaying) {
             _isPlaying = false;
             this.position = 0.0;
         }
@@ -128,24 +120,21 @@ class PropertyAnimation<T> implements IAnimation
 	/**
 	 * Pauses the animation.
 	 */
-	public function pause():Void
-    {
+	public function pause():Void {
         _isPlaying = false;
     }
 	
 	/**
 	 * Resumes the animation, if it is paused.
 	 */
-	public function resume():Void
-    {
+	public function resume():Void {
         _isPlaying = true;
     }
 	
 	/**
 	 * Stops the animation and starts playing it from the beginning.
 	 */
-	public function restart():Void
-    {
+	public function restart():Void {
         _isPlaying = true;
         this.position = 0.0;
     }
@@ -160,8 +149,7 @@ class PropertyAnimation<T> implements IAnimation
     /**
      * Updates the property on the target object according to the current position of the animation.
      */
-    private function updateProperty():Void
-    {
+    private function updateProperty():Void {
         _easedPosition = _easingFunction == null ? _position : _easingFunction.ease(_position);
 
         if (_interpolator == null) { return; }
@@ -215,8 +203,7 @@ class PropertyAnimation<T> implements IAnimation
      */
     public var easingFunction(get, set):IEasingFunction;
     private inline function get_easingFunction():IEasingFunction { return _easingFunction; }
-    private inline function set_easingFunction(value:IEasingFunction):IEasingFunction
-    {
+    private inline function set_easingFunction(value:IEasingFunction):IEasingFunction {
         return _easingFunction = value;
     }
 
@@ -225,8 +212,7 @@ class PropertyAnimation<T> implements IAnimation
      */
     public var interpolator(get, set):IInterpolator<T>;
     private inline function get_interpolator():IInterpolator<T> { return _interpolator; }
-    private inline function set_interpolator(value:IInterpolator<T>):IInterpolator<T>
-    {
+    private inline function set_interpolator(value:IInterpolator<T>):IInterpolator<T> {
         return _interpolator = value;
     }
 
@@ -267,8 +253,7 @@ class PropertyAnimation<T> implements IAnimation
 	 */
 	public var removeOnCompletion(get, set):Bool;
     private inline function get_removeOnCompletion():Bool { return _removeOnCompletion; }
-    private inline function set_removeOnCompletion(value:Bool):Bool
-    {
+    private inline function set_removeOnCompletion(value:Bool):Bool {
         return _removeOnCompletion = value;
     }
 

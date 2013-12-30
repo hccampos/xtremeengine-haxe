@@ -5,8 +5,7 @@ package xtremeengine.physics;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPhysicsControllerCollection
-{
+interface IPhysicsControllerCollection {
     /**
 	 * Adds a controller to the collection.
 	 *

@@ -1,12 +1,12 @@
 package xtremeengine;
+import promhx.Promise.Promise;
 
 /**
  * Interface which defines objects that can be initialized and destroyed.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IInitializable
-{
+interface IInitializable {
     /**
 	 * Initializes the object.
 	 */

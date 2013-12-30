@@ -9,8 +9,7 @@ import xtremeengine.ICore;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class SpatialComponent extends EntityComponent implements ISpatialComponent
-{
+class SpatialComponent extends EntityComponent implements ISpatialComponent {
     private var _sceneNode:ISceneNode;
 
     /**
@@ -21,18 +20,15 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent
      * @param name
      *      The name of the component.
      */
-    public function new(core:ICore, name:String):Void
-    {
+    public function new(core:ICore, name:String):Void {
         super(core, name);
-
         _sceneNode = core.sceneManager.createSceneNode();
     }
 
     /**
 	 * Called when the component is added to an entity.
 	 */
-    public override function onAdd():Void
-    {
+    public override function onAdd():Void {
         super.onAdd();
         this.core.sceneManager.rootSceneNode.addChild(_sceneNode);
     }
@@ -40,8 +36,7 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent
     /**
 	 * Called when the component is removed from an entity.
 	 */
-    public override function onRemove():Void
-    {
+    public override function onRemove():Void {
         this.core.sceneManager.rootSceneNode.removeChild(_sceneNode);
         super.onRemove();
     }

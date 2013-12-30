@@ -11,8 +11,7 @@ import flash.display.DisplayObjectContainer;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IGuiManager extends IPlugin extends IUpdateable
-{
+interface IGuiManager extends IPlugin extends IUpdateable {
     /**
 	 * The display object container which contains the GUI elements.
 	 */

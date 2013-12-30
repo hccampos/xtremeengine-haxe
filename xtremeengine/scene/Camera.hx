@@ -7,8 +7,7 @@ import xtremeengine.scene.ISceneManager;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Camera extends SceneNode implements ICamera
-{
+class Camera extends SceneNode implements ICamera {
     private var _name:String;
 
 	/**
@@ -19,8 +18,7 @@ class Camera extends SceneNode implements ICamera
      * @param name
      *      The name of the camera.
 	 */
-	public function new(sceneManager:ISceneManager, name:String)
-	{
+	public function new(sceneManager:ISceneManager, name:String) {
         super(sceneManager);
         _name = name;
 	}

@@ -11,8 +11,7 @@ import xtremeengine.utils.Vec2;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class NapePhysicsManager extends Plugin implements IPhysicsManager
-{
+class NapePhysicsManager extends Plugin implements IPhysicsManager {
     private var _gravity:Vec2;
     private var _controllers:Array<IPhysicsController>;
     private var _isEnabled:Bool;
@@ -28,8 +27,7 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
      * @param name
      *      The name of the manager.
      */
-    public function new(core:ICore, name:String):Void
-    {
+    public function new(core:ICore, name:String):Void {
         super(core, name);
 
         _controllers = new Array<IPhysicsController>();
@@ -47,10 +45,8 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
      * @param elapsedMillis
      *      The time that has passed since the last update.
      */
-    public function update(elapsedMillis:Float):Void
-    {
-        for (controller in _controllers)
-        {
+    public function update(elapsedMillis:Float):Void {
+        for (controller in _controllers) {
             if (controller.isEnabled) { controller.update(elapsedMillis); }
         }
     }
@@ -61,11 +57,9 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
 	 * @param controller
 	 * 		The controller which is to be added.
 	 */
-    public function addPhysicsController(controller:IPhysicsController):Void
-    {
+    public function addPhysicsController(controller:IPhysicsController):Void {
         if (controller == null) { throw new Error("Trying to add null physics controller."); }
-        if (this.hasPhysicsController(controller))
-        {
+        if (this.hasPhysicsController(controller)) {
             throw new Error("Trying to add a controller which has already been added to the physics manager.");
         }
 
@@ -78,8 +72,7 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
 	 * @param controller
 	 * 		The controller which is to be removed.
 	 */
-    public function removePhysicsController(controller:IPhysicsController):Bool
-    {
+    public function removePhysicsController(controller:IPhysicsController):Bool {
         if (controller == null) { return false; }
         return _controllers.remove(controller);
     }
@@ -92,19 +85,16 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
 	 *
 	 * @return True if the controller was removed and false otherwise.
 	 */
-    public function removePhysicsControllerByName(name:String):Bool
-    {
+    public function removePhysicsControllerByName(name:String):Bool {
         return this.removePhysicsController(this.getPhysicsControllerByName(name));
     }
 
     /**
 	 * Removes all the controllers from the collection.
 	 */
-	public function removeAllPhysicsControllers():Void
-    {
+	public function removeAllPhysicsControllers():Void {
         var toRemove:Array<IPhysicsController> = _controllers.concat([]);
-        for (controller in _controllers)
-        {
+        for (controller in _controllers) {
             this.removePhysicsController(controller);
         }
     }
@@ -117,12 +107,10 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
      *
      * @return The controller which has the specified name or null if the controller can't be found.
 	 */
-	public function getPhysicsControllerByName(name:String):IPhysicsController
-    {
+	public function getPhysicsControllerByName(name:String):IPhysicsController {
         if (name == null || name == "") { return null; }
 
-        for (controller in _controllers)
-        {
+        for (controller in _controllers) {
             if (controller.name == name) { return controller; }
         }
 
@@ -137,8 +125,7 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
 	 *
 	 * @return True if the collection has the specified entity and false otherwise.
 	 */
-	public function hasPhysicsController(controller:IPhysicsController):Bool
-    {
+	public function hasPhysicsController(controller:IPhysicsController):Bool {
         return Lambda.has(_controllers, controller);
     }
 
@@ -150,8 +137,7 @@ class NapePhysicsManager extends Plugin implements IPhysicsManager
      *
      * @return True if the collection has the controller and false otherwise.
      */
-    public function hasPhysicsControllerNamed(name:String):Bool
-    {
+    public function hasPhysicsControllerNamed(name:String):Bool {
         return this.getPhysicsControllerByName(name) != null;
     }
 

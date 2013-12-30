@@ -11,8 +11,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IEntityComponent extends ICoreObject extends INamed extends IUpdateable
-{
+interface IEntityComponent extends INamed extends IUpdateable {
 	/**
 	 * Called when the component is added to an entity.
 	 */

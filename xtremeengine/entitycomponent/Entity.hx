@@ -9,8 +9,7 @@ import xtremeengine.ICore;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Entity extends CoreObject implements IEntity
-{
+class Entity extends CoreObject implements IEntity {
 	private var _name:String;
 	private var _components:Array<IEntityComponent>;
 	private var _isEnabled:Bool;
@@ -26,8 +25,7 @@ class Entity extends CoreObject implements IEntity
 	 * @param name
      *      The name of the new entity.
 	 */
-	public function new(core:ICore, name:String)
-	{
+	public function new(core:ICore, name:String) {
 		super(core);
 		_name = name;
 		_components = new Array<IEntityComponent>();
@@ -45,10 +43,8 @@ class Entity extends CoreObject implements IEntity
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-	{
-		for (component in _components)
-		{
+	public function update(elapsedMillis:Float):Void {
+		for (component in _components) {
 			if (component.isEnabled) { component.update(elapsedMillis); }
 		}
 	}
@@ -59,8 +55,7 @@ class Entity extends CoreObject implements IEntity
 	 * @param component
 	 * 		The component which is to be added.
 	 */
-	public function addComponent(component:IEntityComponent):Void
-	{
+	public function addComponent(component:IEntityComponent):Void {
 		if (component == null) { throw new Error("Trying to add a null entity component."); }
 		if (this.hasComponent(component)) {
 			throw new Error("Trying to add a component that has already been added to the entity.");
@@ -81,19 +76,15 @@ class Entity extends CoreObject implements IEntity
 	 *
 	 * @return True if the component was removed and false otherwise.
 	 */
-	public function removeComponent(component:IEntityComponent):Bool
-	{
+	public function removeComponent(component:IEntityComponent):Bool {
         if (component == null) { return false; }
 
-		if (_components.remove(component))
-		{
+		if (_components.remove(component)) {
 			component.owner = null;
 			component.onRemove();
 			resetComponents();
 			return true;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -106,19 +97,16 @@ class Entity extends CoreObject implements IEntity
 	 *
 	 * @return True if the component was removed and false otherwise.
 	 */
-	public function removeComponentByName(name:String):Bool
-	{
+	public function removeComponentByName(name:String):Bool {
         return this.removeComponent(this.getComponentByName(name));
 	}
 	
 	/**
 	 * Removes all the components of the entity.
 	 */
-	public function removeAllComponents():Void
-	{
+	public function removeAllComponents():Void {
 		var toRemove:Array<IEntityComponent> = _components.concat([]);
-		for (component in toRemove)
-		{
+		for (component in toRemove) {
 			this.removeComponent(component);
 		}
 	}
@@ -129,12 +117,10 @@ class Entity extends CoreObject implements IEntity
      * @param name
      *      The name of the component which is to be retrieved.
 	 */
-	public function getComponentByName(name:String):IEntityComponent
-	{
+	public function getComponentByName(name:String):IEntityComponent {
         if (name == null || name == "") { return null; }
 
-        for (component in _components)
-        {
+        for (component in _components) {
             if (component.name == name) { return component; }
         }
 		
@@ -147,13 +133,10 @@ class Entity extends CoreObject implements IEntity
      * @param cls
      *      The type of component that is to be retrieved.
 	 */
-	public function getComponentByType<T: IEntityComponent>(cls:Class<T>):T
-	{
+	public function getComponentByType<T: IEntityComponent>(cls:Class<T>):T {
 
-        for (component in _components)
-        {
-            if (Std.is(component, cls))
-            {
+        for (component in _components) {
+            if (Std.is(component, cls)) {
                 var ret:T = cast component;
                 return ret;
             }
@@ -168,14 +151,11 @@ class Entity extends CoreObject implements IEntity
      * @param cls
      *      The type of the components which are to be retrieved.
 	 */
-	public function getComponentsByType<T: IEntityComponent>(cls:Class<T>):Array<T>
-	{
+	public function getComponentsByType<T: IEntityComponent>(cls:Class<T>):Array<T> {
 		var foundComponents:Array<T> = new Array<T>();
 		
-		for (component in _components)
-		{
-			if (Std.is(component, cls))
-			{
+		for (component in _components) {
+			if (Std.is(component, cls)) {
 				var foundComponent:T = cast component;
 				foundComponents.push(foundComponent);
 			}
@@ -192,8 +172,7 @@ class Entity extends CoreObject implements IEntity
      *
      * @return True if the entity has the component and false otherwise.
      */
-    public function hasComponent(component:IEntityComponent):Bool
-    {
+    public function hasComponent(component:IEntityComponent):Bool {
         return Lambda.has(_components, component);
     }
 
@@ -205,18 +184,15 @@ class Entity extends CoreObject implements IEntity
      *
      * @return True if the entity has the component and false otherwise.
      */
-    public function hasComponentNamed(name:String):Bool
-    {
+    public function hasComponentNamed(name:String):Bool {
         return this.getComponentByName(name) != null;
     }
 
 	/**
 	 * Calls the onReset() method on all the components of the entity.
 	 */
-	public function resetComponents():Void
-	{
-		for (component in _components)
-		{
+	public function resetComponents():Void {
+		for (component in _components) {
 			component.onReset();
 		}
 	}

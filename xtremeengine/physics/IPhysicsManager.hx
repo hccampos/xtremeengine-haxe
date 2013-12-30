@@ -9,8 +9,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPhysicsManager extends IPlugin extends IUpdateable extends IPhysicsControllerCollection
-{
+interface IPhysicsManager extends IPlugin extends IUpdateable extends IPhysicsControllerCollection {
 	/**
 	 * The gravity force which is applied to all the physics objects.
 	 */

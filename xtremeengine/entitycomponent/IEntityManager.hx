@@ -10,6 +10,4 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IEntityManager extends IPlugin extends IEntityCollection extends IUpdateable
-{
-}
+interface IEntityManager extends IPlugin extends IEntityCollection extends IUpdateable {}

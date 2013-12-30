@@ -5,8 +5,7 @@ package xtremeengine.animation;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IInterpolator<T>
-{
+interface IInterpolator<T> {
     /**
      * Interpolates values between the specified initialValue and finalValue.
      *

@@ -1,5 +1,6 @@
 package xtremeengine.content;
 
+import promhx.Promise;
 import xtremeengine.ICore;
 import xtremeengine.Plugin;
 

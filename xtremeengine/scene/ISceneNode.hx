@@ -5,8 +5,7 @@ package xtremeengine.scene;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ISceneNode extends IPositionable extends IRotateable extends IScalable
-{
+interface ISceneNode extends IPositionable extends IRotateable extends IScalable {
     /**
      * Creates a new scene node and adds it as a child of this node.
      *

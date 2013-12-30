@@ -4,11 +4,11 @@ import xtremeengine.CoreObject;
 import xtremeengine.ICore;
 
 /**
- * ...
+ * Base implementation for components that can be added to game entities.
+ *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class EntityComponent extends CoreObject implements IEntityComponent
-{
+class EntityComponent extends CoreObject implements IEntityComponent {
     private var _name:String;
     private var _owner:IEntity;
     private var _isEnabled:Bool;
@@ -22,8 +22,7 @@ class EntityComponent extends CoreObject implements IEntityComponent
      * @param name
      *      The name of the component.
      */
-    public function new(core:ICore, name:String):Void
-    {
+    public function new(core:ICore, name:String):Void {
         super(core);
 
         _name = name;
@@ -35,27 +34,18 @@ class EntityComponent extends CoreObject implements IEntityComponent
     /**
 	 * Called when the component is added to an entity.
 	 */
-	public function onAdd():Void
-    {
-
-    }
+	public function onAdd():Void {}
 	
 	/**
 	 * Called when another component is added or removed from the entity. This method should be used
 	 * by the component to aquire or release references to other components in the entity.
 	 */
-	public function onReset():Void
-    {
-
-    }
+	public function onReset():Void {}
 	
 	/**
 	 * Called when the component is removed from an entity.
 	 */
-	public function onRemove():Void
-    {
-
-    }
+	public function onRemove():Void {}
 
     /**
 	 * Updates the component.
@@ -63,9 +53,7 @@ class EntityComponent extends CoreObject implements IEntityComponent
 	 * @param elapsedTime
 	 * 		The number of milliseconds elapsed since the last update.
 	 */
-	public function update(elapsedMillis:Float):Void
-    {
-    }
+	public function update(elapsedMillis:Float):Void {}
 
     /**
      * The name of the component.

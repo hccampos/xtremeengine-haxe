@@ -1,16 +1,19 @@
 package xtremeengine.screens;
 
+import promhx.Promise;
 import xtremeengine.utils.MathUtils;
+import xtremeengine.utils.PromiseUtils;
 
 /**
  * Default implementation of the IScreen interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Screen implements IScreen
-{
+class Screen implements IScreen {
+    private static inline var ON_DIR:Float = -1;
+    private static inline var OFF_DIR:Float = 1;
+
     private var _screenManager:IScreenManager;
-    private var _isInitialized:Bool;
     private var _isLoaded:Bool;
     private var _isPopup:Bool;
     private var _transitionOnDuration:Float;
@@ -28,10 +31,8 @@ class Screen implements IScreen
      * @param screenManager
      *      The screen manager to which the screen belongs.
      */
-    public function new(screenManager:IScreenManager):Void
-    {
+    public function new(screenManager:IScreenManager):Void {
         _screenManager = screenManager;
-        _isInitialized = false;
         _isLoaded = false;
         _isPopup = false;
         _transitionOnDuration = 0.0;
@@ -47,39 +48,19 @@ class Screen implements IScreen
     //--------------------------------------------------------------------------------------------//
 
     /**
-	 * Initializes the screen.
-	 */
-	public function initialize():Void
-    {
-        if (_isInitialized) { return; }
-        _isInitialized = true;
-    }
-	
-	/**
-	 * Called before the screen is destroyed.
-	 */
-	public function destroy():Void
-    {
-        if (!_isInitialized) { return; }
-        _isInitialized = false;
-    }
-
-    /**
      * Loads any required resources.
      */
-    public function load():Void
-    {
-        if (_isLoaded) { return; }
+    public function load():Promise<Bool> {
         _isLoaded = true;
+        return PromiseUtils.resolved(true);
     }
 
     /**
      * Unloads any resources that may have been loaded.
      */
-    public function unload():Void
-    {
-        if (!_isLoaded) { return; }
+    public function unload():Promise<Bool> {
         _isLoaded = false;
+        return PromiseUtils.resolved(true);
     }
 
     /**
@@ -89,66 +70,43 @@ class Screen implements IScreen
      *      The time that has passed since the last update.
      * @param otherScreenHasFocus
      *      Whether another screen has got input focus.
-     * @param covered
+     * @param isCovered
      *      Whether the screen is covered by another screen.
      */
-    public function update(elapsedMillis:Float, otherScreenHasFocus:Bool, covered:Bool):Void
-    {
+    public function update(elapsedMillis:Float, otherScreenHasFocus:Bool, isCovered:Bool):Void {
         _otherScreenHasFocus = otherScreenHasFocus;
 
-        if (this.isExiting)
-        {
-            // If the screen is going away to die, it should transition off.
+        if (this.isExiting) {
             _state = EScreenState.TransitionOff;
-
-            if (!this.updateTransition(elapsedMillis, this.transitionOffDuration, 1))
-            {
-                this.screenManager.removeScreen(this);
-            }
-        }
-        else if (covered)
-        {
-            if (this.updateTransition(elapsedMillis, this.transitionOffDuration, 1))
-            {
-                // Still busy transitioning.
-                _state = EScreenState.TransitionOff;
-            }
-            else
-            {
-                // Transition finished!
-                _state = EScreenState.Hidden;
-            }
-        }
-        else
-        {
-            if (this.updateTransition(elapsedMillis, this.transitionOnDuration, -1))
-            {
-                // Still busy transitioning.
-                _state = EScreenState.TransitionOn;
-            }
-            else
-            {
-                // Transition finished!
-                _state = EScreenState.Active;
-            }
+            var done:Bool = this.transition(elapsedMillis, this.transitionOffDuration, OFF_DIR);
+            if (done) { this.screenManager.removeScreen(this); }
+        } else if (isCovered) {
+            var done:Bool = this.transition(elapsedMillis, this.transitionOffDuration, OFF_DIR);
+            _state = done ? EScreenState.Hidden : EScreenState.TransitionOff;
+        } else {
+            var done:Bool = this.transition(elapsedMillis, this.transitionOnDuration, ON_DIR);
+            _state = done ? EScreenState.Active : EScreenState.TransitionOn;
         }
     }
+
+    /**
+     * Allows the screen to handle user input. Unlike the update() method, this method is only
+     * called when the screen has focus.
+     *
+     * @param elapsedMillis
+     *      The time that has passed since the last update.
+     */
+    public function handleInput(elapsedMillis:Float):Void {}
 
     /**
      * Tells the screen to go away. Unlike IScreenManager.removeScreen(), which instantly kills the
      * screen, this method respects the transition timings and will give the screen a chance to
      * gradually transition off.
      */
-    public function exit():Void
-    {
-        // If the screen has a zero transition time, remove it immediately.
-        if (_transitionOffDuration == 0.0)
-        {
+    public function exit():Void {
+        if (_transitionOffDuration == 0.0) {
             this.screenManager.removeScreen(this);
-        }
-        // Otherwise, just indicate that it should transition off.
-        else
-        {
+        } else {
             _isExiting = true;
         }
     }
@@ -170,10 +128,9 @@ class Screen implements IScreen
      * @param direction
      *      Whether we're transitioning on or off.
      *
-     * @return True if the transition is still not finished and false otherwise.
+     * @return Whether the transition is finished.
      */
-    private function updateTransition(elapsedMillis:Float, transitionDuration:Float, direction:Int):Bool
-    {
+    private function transition(elapsedMillis:Float, transitionDuration:Float, direction:Int):Bool {
         var delta:Float = transitionDuration == 0 ? 1 : (elapsedMillis / transitionDuration);
 
         _transitionPosition += delta * direction;
@@ -184,15 +141,14 @@ class Screen implements IScreen
         var fullyOff:Bool = _transitionPosition >= 1;
 
         // Are we done transitioning?
-        if ((transitioningOn && fullyOn) || (transitioningOff && fullyOff))
-        {
-            // The transition is finished so we return false.
+        if ((transitioningOn && fullyOn) || (transitioningOff && fullyOff)) {
+            // The transition is finished so we return true.
             _transitionPosition = MathUtils.clamp(_transitionPosition, 0, 1);
-            return false;
+            return true;
         }
 
-        // We're still transitioning so we return true.
-        return true;
+        // We're still transitioning...
+        return false;
     }
 
     //}
@@ -208,12 +164,6 @@ class Screen implements IScreen
     public var screenManager(get, never):IScreenManager;
     private inline function get_screenManager():IScreenManager { return _screenManager; }
 
-    /**
-     * Whether the screen has been initialized.
-     */
-    public var isInitialized(get, never):Bool;
-    private inline function get_isInitialized():Bool { return _isInitialized; }
-
      /**
      * Whether the object is loaded.
      */
@@ -225,8 +175,7 @@ class Screen implements IScreen
      */
     public var transitionOnDuration(get, set):Float;
     private inline function get_transitionOnDuration():Float { return _transitionOnDuration; }
-    private inline function set_transitionOnDuration(value:Float):Float
-    {
+    private inline function set_transitionOnDuration(value:Float):Float {
         return _transitionOnDuration = value;
     }
 
@@ -236,8 +185,7 @@ class Screen implements IScreen
      */
     public var transitionOffDuration(get, set):Float;
     private inline function get_transitionOffDuration():Float { return _transitionOffDuration; }
-    private inline function set_transitionOffDuration(value:Float):Float
-    {
+    private inline function set_transitionOffDuration(value:Float):Float {
         return _transitionOffDuration = value;
     }
 
@@ -247,8 +195,7 @@ class Screen implements IScreen
      */
     public var transitionPosition(get, set):Float;
     private inline function get_transitionPosition():Float { return _transitionPosition; }
-    private inline function set_transitionPosition(value:Float):Float
-    {
+    private inline function set_transitionPosition(value:Float):Float {
         return _transitionPosition = value;
     }
 
@@ -283,7 +230,6 @@ class Screen implements IScreen
      */
     public var isExiting(get, never):Bool;
     private inline function get_isExiting():Bool { return _isExiting; }
-    private inline function set_isExiting(value:Bool):Bool { return _isExiting = value; }
 
     /**
      * Whether this screen is active and can respond to user input.

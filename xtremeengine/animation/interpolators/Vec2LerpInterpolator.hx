@@ -8,8 +8,7 @@ import xtremeengine.animation.IInterpolator.IInterpolator;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Vec2LerpInterpolator implements IInterpolator<Vec2>
-{
+class Vec2LerpInterpolator implements IInterpolator<Vec2> {
     public function new():Void {}
 
     /**
@@ -24,8 +23,7 @@ class Vec2LerpInterpolator implements IInterpolator<Vec2>
      *
      * @return The interpolated value.
      */
-    public function interpolate(position:Float, initialValue:Vec2, finalValue:Vec2):Vec2
-    {
+    public function interpolate(position:Float, initialValue:Vec2, finalValue:Vec2):Vec2 {
         var x:Float = initialValue.x + position * (finalValue.x - initialValue.x);
         var y:Float = initialValue.y + position * (finalValue.y - initialValue.y);
         return new Vec2(x, y);

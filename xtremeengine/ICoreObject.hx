@@ -6,8 +6,7 @@ package xtremeengine;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ICoreObject
-{
+interface ICoreObject {
 	/**
 	 * The XtremeEngine Core object to which the object belongs.
 	 */

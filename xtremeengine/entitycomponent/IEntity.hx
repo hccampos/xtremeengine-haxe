@@ -1,5 +1,6 @@
 package xtremeengine.entitycomponent;
 
+import xtremeengine.ICoreObject;
 import xtremeengine.INamed;
 import xtremeengine.IUpdateable;
 
@@ -13,8 +14,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IEntity extends IEntityComponentCollection extends IUpdateable extends INamed
-{
+interface IEntity extends ICoreObject extends IEntityComponentCollection extends IUpdateable extends INamed {
     /**
 	 * Calls the onReset() method on all the components of the entity.
 	 */

@@ -1,5 +1,6 @@
 package xtremeengine;
 
+import promhx.Promise;
 import xtremeengine.animation.IAnimationManager;
 import xtremeengine.content.IContentManager;
 import xtremeengine.entitycomponent.IEntityManager;
@@ -13,8 +14,7 @@ import xtremeengine.scene.ISceneManager;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ICore extends IInitializable extends ILoadable
-{
+interface ICore extends IAsyncInitializable extends ILoadable {
     /**
      * Updates all the plugins.
      *
@@ -28,16 +28,20 @@ interface ICore extends IInitializable extends ILoadable
      *
      * @param plugin
      *      The plugin which is to be installed.
+     *
+     * @return A promise which is resolved when the plugin has been installed.
      */
-    public function installPlugin(plugin:IPlugin):Void;
+    public function installPlugin(plugin:IPlugin):Promise<Bool>;
 
     /**
      * Uninstalls the specified plugin from the engine.
      *
      * @param plugin
      *      The plugin which is to be uninstalled.
+     *
+     * @return A promise which is resolved when the plugin has been uninstalled.
      */
-    public function uninstallPlugin(plugin:IPlugin):Void;
+    public function uninstallPlugin(plugin:IPlugin):Promise<Bool>;
 
 	/**
 	 * Gets the plugin with the specified name. If no name is specified the returned plug-in will be

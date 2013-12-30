@@ -15,6 +15,4 @@ import xtremeengine.IUpdateable;
 interface IScreenManager extends IInitializable
                          extends IUpdateable
                          extends ILoadable
-                         extends IScreenCollection
-{
-}
+                         extends IScreenCollection {}

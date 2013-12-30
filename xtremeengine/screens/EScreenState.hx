@@ -5,8 +5,7 @@ package xtremeengine.screens;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-enum EScreenState
-{
+enum EScreenState {
     /**
      * The screen is transitioning from hidden to visible.
      */

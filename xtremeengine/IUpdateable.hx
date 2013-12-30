@@ -5,8 +5,7 @@ package xtremeengine;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IUpdateable
-{
+interface IUpdateable {
     /**
 	 * Updates the state of the object.
 	 *

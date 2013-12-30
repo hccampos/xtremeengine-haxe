@@ -5,10 +5,8 @@ package xtremeengine.errors;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Error extends flash.errors.Error
-{
-    public function new(message:String)
-    {
+class Error extends flash.errors.Error {
+    public function new(message:String) {
         super(message);
     }
 }

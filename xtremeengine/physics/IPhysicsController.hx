@@ -8,6 +8,4 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPhysicsController extends INamed extends IUpdateable
-{
-}
+interface IPhysicsController extends INamed extends IUpdateable {}

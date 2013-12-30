@@ -8,6 +8,4 @@ import xtremeengine.INamed;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ICamera extends ISceneNode extends INamed
-{
-}
+interface ICamera extends ISceneNode extends INamed {}

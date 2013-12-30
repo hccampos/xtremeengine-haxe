@@ -5,8 +5,7 @@ package xtremeengine.scene;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IRotateable
-{
+interface IRotateable {
     /**
      * The rotation of the object (in radians).
      */

@@ -5,8 +5,7 @@ package xtremeengine.scene;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ICameraCollection
-{
+interface ICameraCollection {
     /**
 	 * Adds the specified camera to the collection.
 	 *

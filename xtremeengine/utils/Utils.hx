@@ -1,13 +1,14 @@
 package xtremeengine.utils;
 
 /**
- * ...
- * @author Hugo Campos
+ * Commonly used utilities.
+ *
+ * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
 class Utils
 {
 	private function new() { }
-	
+
 	public static function between(min:Float, max:Float):Float {
 		return min + Math.random() * (max - min);
 	}

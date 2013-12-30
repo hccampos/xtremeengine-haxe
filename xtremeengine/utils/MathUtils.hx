@@ -56,15 +56,14 @@ class MathUtils
      */
     public static inline function clamp(value:Float, min:Float, max:Float):Float
     {
-        if (value > max)
-        {
+        if (value > max) {
             return max;
         }
-        else if (value < min)
-        {
+        else if (value < min) {
             return min;
         }
-
-        return value;
+        else {
+            return value;
+        }
     }
 }
