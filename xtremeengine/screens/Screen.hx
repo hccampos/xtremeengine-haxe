@@ -1,6 +1,7 @@
 package xtremeengine.screens;
 
 import promhx.Promise;
+import xtremeengine.Context;
 import xtremeengine.utils.MathUtils;
 import xtremeengine.utils.PromiseUtils;
 
@@ -14,6 +15,7 @@ class Screen implements IScreen {
     private static inline var OFF_DIR:Float = 1;
 
     private var _screenManager:IScreenManager;
+    private var _context:Context;
     private var _isLoaded:Bool;
     private var _isPopup:Bool;
     private var _transitionOnDuration:Float;
@@ -31,8 +33,9 @@ class Screen implements IScreen {
      * @param screenManager
      *      The screen manager to which the screen belongs.
      */
-    public function new(screenManager:IScreenManager):Void {
-        _screenManager = screenManager;
+    public function new():Void {
+        _screenManager = null;
+        _context = new Context();
         _isLoaded = false;
         _isPopup = false;
         _transitionOnDuration = 0.0;
@@ -95,8 +98,12 @@ class Screen implements IScreen {
      *
      * @param elapsedMillis
      *      The time that has passed since the last update.
+     * @param otherScreenHasFocus
+     *      Whether another screen has got input focus.
+     * @param isCovered
+     *      Whether the screen is covered by another screen.
      */
-    public function handleInput(elapsedMillis:Float):Void {}
+    public function handleInput(elapsedMillis:Float, otherScreenHasFocus:Bool, isCovered:Bool):Void {}
 
     /**
      * Tells the screen to go away. Unlike IScreenManager.removeScreen(), which instantly kills the
@@ -161,8 +168,17 @@ class Screen implements IScreen {
     /**
      * The screen manager to which the screen belongs.
      */
-    public var screenManager(get, never):IScreenManager;
+    public var screenManager(get, set):IScreenManager;
     private inline function get_screenManager():IScreenManager { return _screenManager; }
+    private inline function set_screenManager(value:IScreenManager):IScreenManager {
+        return _screenManager = value;
+    }
+
+    /**
+     * The context where the screen is drawn.
+     */
+    public var context(get, never):Context;
+    private inline function get_context():Context { return _context; }
 
      /**
      * Whether the object is loaded.

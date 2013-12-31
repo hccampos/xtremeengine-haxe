@@ -52,7 +52,7 @@ class Game
 		
         this.setupStage();
 
-        _screenManager = new ScreenManager();
+        _screenManager = new ScreenManager(_context);
         this.setupInitialScreens();
         _screenManager.initialize();
 

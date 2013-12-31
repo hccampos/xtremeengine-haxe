@@ -1,5 +1,6 @@
 package xtremeengine.screens;
 
+import xtremeengine.Context;
 import xtremeengine.ICoreObject;
 import xtremeengine.IInitializable;
 import xtremeengine.ILoadable;
@@ -30,8 +31,12 @@ interface IScreen extends ILoadable {
      *
      * @param elapsedMillis
      *      The time that has passed since the last update.
+     * @param otherScreenHasFocus
+     *      Whether another screen has got input focus.
+     * @param isCovered
+     *      Whether the screen is covered by another screen.
      */
-    public function handleInput(elapsedMillis:Float):Void;
+    public function handleInput(elapsedMillis:Float, otherScreenHasFocus:Bool, isCovered:Bool):Void;
 
     /**
      * Tells the screen to go away. Unlike IScreenManager.removeScreen(), which instantly kills the
@@ -43,7 +48,12 @@ interface IScreen extends ILoadable {
     /**
      * The screen manager to which the screen belongs.
      */
-    public var screenManager(get, never):IScreenManager;
+    public var screenManager(get, set):IScreenManager;
+
+    /**
+     * The context where the screen is drawn.
+     */
+    public var context(get, never):Context;
 
     /**
      * Indicates how long the screen takes to transition on when it is activated (in milliseconds).

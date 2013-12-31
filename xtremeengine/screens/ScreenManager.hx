@@ -1,6 +1,7 @@
 package xtremeengine.screens;
 
 import promhx.Promise;
+import xtremeengine.Context;
 import xtremeengine.Plugin;
 import xtremeengine.utils.PromiseUtils;
 
@@ -10,6 +11,7 @@ import xtremeengine.utils.PromiseUtils;
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
 class ScreenManager implements IScreenManager {
+    private var _context:Context;
     private var _screens:Array<IScreen>;
     private var _isInitialized:Bool;
     private var _isLoaded:Bool;
@@ -21,10 +23,11 @@ class ScreenManager implements IScreenManager {
     /**
      * Constructor.
      *
-     * @param name
-     *      The name of the screen manager.
+     * @param context
+     *      The context to which the screens are to be added.
      */
-    public function new():Void {
+    public function new(context:Context):Void {
+        _context = context;
         _isInitialized = false;
         _isLoaded = false;
         _isEnabled = true;
@@ -113,7 +116,7 @@ class ScreenManager implements IScreenManager {
                 // If this is the first screen that we come across we give a chance to handle input.
                 // The handleInput method won't be called for subsequent screens.
                 if (!otherScreenHasFocus) {
-                    screen.handleInput(elapsedMillis);
+                    screen.handleInput(elapsedMillis, otherScreenHasFocus, isCovered);
                     otherScreenHasFocus = true;
                 }
 
@@ -132,7 +135,9 @@ class ScreenManager implements IScreenManager {
      */
     public function addScreen(screen:IScreen):Promise<Bool> {
         return screen.load().then(function (result):Bool {
+            _context.addChild(screen.context);
             _screens.push(screen);
+            screen.screenManager = this;
             return true;
         });
     }
@@ -150,9 +155,11 @@ class ScreenManager implements IScreenManager {
     public function removeScreen(screen:IScreen):Promise<Bool> {
         if (!this.hasScreen(screen)) { return PromiseUtils.resolved(false); }
 
-        return screen.unload().then(function (result):Bool {
-            return _screens.remove(screen);
-        });
+        screen.screenManager = null;
+        _context.removeChild(screen.context);
+        _screens.remove(screen);
+
+        return screen.unload();
     }
 
     /**
@@ -188,10 +195,16 @@ class ScreenManager implements IScreenManager {
     //--------------------------------------------------------------------------------------------//
 
     /**
+     * The context to which the screens are added.
+     */
+    public var context(get, never):Context;
+    private inline function get_context():Context { return _context; }
+
+    /**
      * The screens that make up the collection.
      */
     public var screens(get, never):Array<IScreen>;
-    public inline function get_screens():Array<IScreen> { return _screens; }
+    private inline function get_screens():Array<IScreen> { return _screens; }
 
     /**
      * Whether the screen manager has been initialized.
