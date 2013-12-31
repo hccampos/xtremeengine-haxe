@@ -66,6 +66,11 @@ interface ICore extends IAsyncInitializable extends ILoadable {
     public var context(get, never):Context;
 
     /**
+     * The plugin factory used to create the default plugins used by the core.
+     */
+    public var pluginFactory(get, set):IPluginFactory;
+
+    /**
      * The content manager.
      */
     public var contentManager(get, never):IContentManager;

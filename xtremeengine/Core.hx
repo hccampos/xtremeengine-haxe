@@ -32,6 +32,7 @@ import xtremeengine.utils.Utils;
  */
 class Core extends EventDispatcher implements ICore {
     private var _context:Context;
+    private var _pluginFactory:IPluginFactory;
     private var _contentManager:IContentManager;
 	private var _sceneManager:ISceneManager;
 	private var _physicsManager:IPhysicsManager;
@@ -59,6 +60,7 @@ class Core extends EventDispatcher implements ICore {
         if (context == null) { throw new Error("To create a Core object, a context is required."); }
         _context = context;
 
+        _pluginFactory = new PluginFactory();
         _contentManager = null;
 		_sceneManager = null;
 		_physicsManager = null;
@@ -86,12 +88,14 @@ class Core extends EventDispatcher implements ICore {
 	public function initialize():Promise<Bool> {
         if (_isInitialized) { return PromiseUtils.resolved(true); }
 
-        _contentManager = new ContentManager(this, "contentManager");
-		_sceneManager = new SceneManager(this, "sceneManager");
-        _physicsManager = new NapePhysicsManager(this, "physicsManager");
-		_entityManager = new EntityManager(this, "entityManager");
-		_animationManager = new AnimationManager(this, "animationManager");
-		_guiManager = new GuiManager(this, "guiManager");
+        var factory:IPluginFactory = this.pluginFactory;
+
+        _contentManager = factory.createContentManager(this, "contentManager");
+		_sceneManager = factory.createSceneManager(this, "sceneManager");
+        _physicsManager = factory.createPhysicsManager(this, "physicsManager");
+		_entityManager = factory.createEntityManager(this, "entityManager");
+		_animationManager = factory.createAnimationManager(this, "animationManager");
+		_guiManager = factory.createGuiManager(this, "guiManager");
 		
         this.addPlugin(_contentManager);
         this.addPlugin(_sceneManager);
@@ -369,6 +373,15 @@ class Core extends EventDispatcher implements ICore {
      */
     public var context(get, never):Context;
     private inline function get_context():Context { return _context; }
+
+    /**
+     * The plugin factory used to create the default plugins used by the core.
+     */
+    public var pluginFactory(get, set):IPluginFactory;
+    private inline function get_pluginFactory():IPluginFactory { return _pluginFactory; }
+    private inline function set_pluginFactory(value:IPluginFactory):IPluginFactory {
+        return _pluginFactory = value;
+    }
 
     /**
      * Whether the engine has been initialized.
