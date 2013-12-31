@@ -108,8 +108,10 @@ class ScreenManager implements IScreenManager {
         var otherScreenHasFocus = false;
         var isCovered = false;
 
-        var screen:IScreen = null;
-        while ((screen = toUpdate.pop()) != null) {
+        var count:Int = toUpdate.length;
+        for (i in 1 ... count + 1) {
+            var screen:IScreen = toUpdate[count - i];
+
             screen.update(elapsedMillis, otherScreenHasFocus, isCovered);
 
             if (screen.state == EScreenState.TransitionOn || screen.state == EScreenState.Active) {

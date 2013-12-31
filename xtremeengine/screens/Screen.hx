@@ -90,6 +90,10 @@ class Screen implements IScreen {
             var done:Bool = this.transition(elapsedMillis, this.transitionOnDuration, ON_DIR);
             _state = done ? EScreenState.Active : EScreenState.TransitionOn;
         }
+
+        // The screen only has to be visible if it's state is not hidden. This way, we don't bother
+        // the CPU and GPU with screens that are hidden.
+        this.context.visible = this.state != EScreenState.Hidden;
     }
 
     /**
