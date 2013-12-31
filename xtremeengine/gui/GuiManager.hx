@@ -79,7 +79,7 @@ class GuiManager extends Plugin implements IGuiManager {
     private inline function get_guiContainer():DisplayObjectContainer { return _guiContainer; }
 
     /**
-	 * Whether the object is enabled.
+	 * Whether the GUI manager is enabled.
 	 */
 	public var isEnabled(get, set):Bool;
     private inline function get_isEnabled():Bool { return _isEnabled; }

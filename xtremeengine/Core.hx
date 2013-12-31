@@ -1,28 +1,18 @@
 package xtremeengine;
 
+import flash.events.EventDispatcher;
 import promhx.Promise;
-import xtremeengine.animation.AnimationManager;
 import xtremeengine.animation.IAnimationManager;
-import xtremeengine.content.ContentManager;
 import xtremeengine.content.IContentManager;
-import xtremeengine.entitycomponent.EntityManager;
 import xtremeengine.entitycomponent.IEntityManager;
 import xtremeengine.errors.Error;
-import xtremeengine.gui.GuiManager;
 import xtremeengine.gui.IGuiManager;
+import xtremeengine.input.IInputManager;
 import xtremeengine.IPlugin;
 import xtremeengine.IUpdateable;
-import xtremeengine.physics.NapePhysicsManager;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
-import xtremeengine.scene.SceneManager;
-import flash.events.EventDispatcher;
-import xtremeengine.screens.IScreen;
-import xtremeengine.screens.IScreenManager;
-import xtremeengine.screens.Screen;
-import xtremeengine.screens.ScreenManager;
 import xtremeengine.utils.PromiseUtils;
-import xtremeengine.utils.Utils;
 
 /**
  * Main class of XtremeEngine. It is responsible for managing all the managers of the engine and
@@ -33,12 +23,13 @@ import xtremeengine.utils.Utils;
 class Core extends EventDispatcher implements ICore {
     private var _context:Context;
     private var _pluginFactory:IPluginFactory;
+    private var _animationManager:IAnimationManager;
     private var _contentManager:IContentManager;
-	private var _sceneManager:ISceneManager;
-	private var _physicsManager:IPhysicsManager;
 	private var _entityManager:IEntityManager;
-	private var _animationManager:IAnimationManager;
-	private var _guiManager:IGuiManager;
+    private var _guiManager:IGuiManager;
+    private var _inputManager:IInputManager;
+	private var _physicsManager:IPhysicsManager;
+    private var _sceneManager:ISceneManager;
 	private var _plugins:Array<IPlugin>;
 	private var _updateablePlugins:Array<IUpdateable>;
     private var _loadablePlugins:Array<ILoadable>;
@@ -61,12 +52,13 @@ class Core extends EventDispatcher implements ICore {
         _context = context;
 
         _pluginFactory = new PluginFactory();
+        _animationManager = null;
         _contentManager = null;
-		_sceneManager = null;
-		_physicsManager = null;
 		_entityManager = null;
-		_animationManager = null;
 		_guiManager = null;
+        _inputManager = null;
+        _physicsManager = null;
+        _sceneManager = null;
 
 		_plugins = new Array<IPlugin>();
 		_updateablePlugins = new Array<IUpdateable>();
@@ -94,15 +86,17 @@ class Core extends EventDispatcher implements ICore {
 		_sceneManager = factory.createSceneManager(this, "sceneManager");
         _physicsManager = factory.createPhysicsManager(this, "physicsManager");
 		_entityManager = factory.createEntityManager(this, "entityManager");
+        _guiManager = factory.createGuiManager(this, "guiManager");
+        _inputManager = factory.createInputManager(this, "inputManager");
 		_animationManager = factory.createAnimationManager(this, "animationManager");
-		_guiManager = factory.createGuiManager(this, "guiManager");
 		
         this.addPlugin(_contentManager);
+        this.addPlugin(_inputManager);
         this.addPlugin(_sceneManager);
         this.addPlugin(_physicsManager);
-        this.addPlugin(_entityManager);
         this.addPlugin(_animationManager);
         this.addPlugin(_guiManager);
+        this.addPlugin(_entityManager);
 
         for (plugin in _plugins) {
             plugin.initialize();
@@ -127,12 +121,13 @@ class Core extends EventDispatcher implements ICore {
         }
 
         return this.unload().then(function (value):Bool {
-            _contentManager = null;
-            _sceneManager = null;
-            _physicsManager = null;
-            _entityManager = null;
             _animationManager = null;
+            _contentManager = null;
+            _entityManager = null;
             _guiManager = null;
+            _inputManager = null;
+            _physicsManager = null;
+            _sceneManager = null;
             _plugins = new Array<IPlugin>();
             _updateablePlugins = new Array<IUpdateable>();
             _loadablePlugins = new Array<ILoadable>();
@@ -396,22 +391,16 @@ class Core extends EventDispatcher implements ICore {
     private inline function get_isLoaded():Bool { return _isLoaded; }
 
     /**
+     * The animation manager.
+     */
+    public var animationManager(get, never):IAnimationManager;
+    private inline function get_animationManager():IAnimationManager { return _animationManager; }
+
+    /**
      * The content manager.
      */
     public var contentManager(get, never):IContentManager;
     private inline function get_contentManager():IContentManager { return _contentManager; }
-
-    /**
-     * The scene manager.
-     */
-    public var sceneManager(get, never):ISceneManager;
-    private inline function get_sceneManager():ISceneManager { return _sceneManager; }
-
-    /**
-     * The physics manager.
-     */
-    public var physicsManager(get, never):IPhysicsManager;
-    private inline function get_physicsManager():IPhysicsManager { return _physicsManager; }
 
     /**
      * The entity-component manager.
@@ -420,16 +409,28 @@ class Core extends EventDispatcher implements ICore {
     private inline function get_entityManager():IEntityManager { return _entityManager; }
 
     /**
-     * The animation manager.
-     */
-    public var animationManager(get, never):IAnimationManager;
-    private inline function get_animationManager():IAnimationManager { return _animationManager; }
-
-    /**
      * The GUI manager.
      */
     public var guiManager(get, never):IGuiManager;
     private inline function get_guiManager():IGuiManager { return _guiManager; }
+
+    /**
+     * The input manager.
+     */
+    public var inputManager(get, never):IInputManager;
+    private inline function get_inputManager():IInputManager { return _inputManager; }
+
+    /**
+     * The physics manager.
+     */
+    public var physicsManager(get, never):IPhysicsManager;
+    private inline function get_physicsManager():IPhysicsManager { return _physicsManager; }
+
+    /**
+     * The scene manager.
+     */
+    public var sceneManager(get, never):ISceneManager;
+    private inline function get_sceneManager():ISceneManager { return _sceneManager; }
 
     //}
     //--------------------------------------------------------------------------------------------//

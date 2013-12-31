@@ -8,6 +8,8 @@ import xtremeengine.entitycomponent.EntityManager;
 import xtremeengine.entitycomponent.IEntityManager;
 import xtremeengine.gui.GuiManager;
 import xtremeengine.gui.IGuiManager;
+import xtremeengine.input.IInputManager;
+import xtremeengine.input.InputManager;
 import xtremeengine.IPluginFactory;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.physics.NapePhysicsManager;
@@ -37,6 +39,10 @@ class PluginFactory implements IPluginFactory {
 
     public function createGuiManager(core:ICore, name:String):IGuiManager {
         return new GuiManager(core, name);
+    }
+
+    public function createInputManager(core:ICore, name:String):IInputManager {
+        return new InputManager(core, name);
     }
 
     public function createPhysicsManager(core:ICore, name:String):IPhysicsManager {

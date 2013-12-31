@@ -4,6 +4,7 @@ import xtremeengine.animation.IAnimationManager;
 import xtremeengine.content.IContentManager;
 import xtremeengine.entitycomponent.IEntityManager;
 import xtremeengine.gui.IGuiManager;
+import xtremeengine.input.IInputManager;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
 
@@ -20,6 +21,8 @@ interface IPluginFactory {
     public function createEntityManager(core:ICore, name:String):IEntityManager;
 
     public function createGuiManager(core:ICore, name:String):IGuiManager;
+
+    public function createInputManager(core:ICore, name:String):IInputManager;
 
     public function createPhysicsManager(core:ICore, name:String):IPhysicsManager;
 

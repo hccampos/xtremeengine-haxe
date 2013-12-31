@@ -5,6 +5,7 @@ import xtremeengine.animation.IAnimationManager;
 import xtremeengine.content.IContentManager;
 import xtremeengine.entitycomponent.IEntityManager;
 import xtremeengine.gui.IGuiManager;
+import xtremeengine.input.IInputManager;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
 
@@ -71,19 +72,14 @@ interface ICore extends IAsyncInitializable extends ILoadable {
     public var pluginFactory(get, set):IPluginFactory;
 
     /**
+     * The animation manager.
+     */
+    public var animationManager(get, never):IAnimationManager;
+
+    /**
      * The content manager.
      */
     public var contentManager(get, never):IContentManager;
-
-    /**
-     * The scene manager.
-     */
-    public var sceneManager(get, never):ISceneManager;
-
-    /**
-     * The physics manager.
-     */
-    public var physicsManager(get, never):IPhysicsManager;
 
     /**
      * The entity-component manager.
@@ -91,12 +87,22 @@ interface ICore extends IAsyncInitializable extends ILoadable {
     public var entityManager(get, never):IEntityManager;
 
     /**
-     * The animation manager.
-     */
-    public var animationManager(get, never):IAnimationManager;
-
-    /**
      * The GUI manager.
      */
     public var guiManager(get, never):IGuiManager;
+
+    /**
+     * The input manager.
+     */
+    public var inputManager(get, never):IInputManager;
+
+    /**
+     * The physics manager.
+     */
+    public var physicsManager(get, never):IPhysicsManager;
+
+     /**
+     * The scene manager.
+     */
+    public var sceneManager(get, never):ISceneManager;
 }
