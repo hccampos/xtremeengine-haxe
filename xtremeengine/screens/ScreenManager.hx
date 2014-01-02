@@ -2,7 +2,8 @@ package xtremeengine.screens;
 
 import promhx.Promise;
 import xtremeengine.Context;
-import xtremeengine.Plugin;
+import xtremeengine.GameObject;
+import xtremeengine.IGame;
 import xtremeengine.utils.PromiseUtils;
 
 /**
@@ -10,7 +11,7 @@ import xtremeengine.utils.PromiseUtils;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class ScreenManager implements IScreenManager {
+class ScreenManager extends GameObject implements IScreenManager {
     private var _context:Context;
     private var _screens:Array<IScreen>;
     private var _isInitialized:Bool;
@@ -23,11 +24,12 @@ class ScreenManager implements IScreenManager {
     /**
      * Constructor.
      *
-     * @param context
-     *      The context to which the screens are to be added.
+     * @param game
+     *      The game to which the screen manager belongs.
      */
-    public function new(context:Context):Void {
-        _context = context;
+    public function new(game:IGame):Void {
+        super(game);
+
         _isInitialized = false;
         _isLoaded = false;
         _isEnabled = true;
@@ -136,10 +138,13 @@ class ScreenManager implements IScreenManager {
      *      The screen which is to be added.
      */
     public function addScreen(screen:IScreen):Promise<Bool> {
+        screen.screenManager = this;
+
         return screen.load().then(function (result):Bool {
-            _context.addChild(screen.context);
+            this.context.addChild(screen.context);
             _screens.push(screen);
-            screen.screenManager = this;
+            screen.screenManager = null;
+
             return true;
         });
     }
@@ -157,11 +162,13 @@ class ScreenManager implements IScreenManager {
     public function removeScreen(screen:IScreen):Promise<Bool> {
         if (!this.hasScreen(screen)) { return PromiseUtils.resolved(false); }
 
-        screen.screenManager = null;
-        _context.removeChild(screen.context);
+        this.context.removeChild(screen.context);
         _screens.remove(screen);
 
-        return screen.unload();
+        return screen.unload().then(function (result):Bool {
+            screen.screenManager = null;
+            return true;
+        });
     }
 
     /**
@@ -200,7 +207,7 @@ class ScreenManager implements IScreenManager {
      * The context to which the screens are added.
      */
     public var context(get, never):Context;
-    private inline function get_context():Context { return _context; }
+    private inline function get_context():Context { return this.game.context; }
 
     /**
      * The screens that make up the collection.

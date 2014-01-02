@@ -15,7 +15,7 @@ import xtremeengine.scene.ISceneManager;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface ICore extends IAsyncInitializable extends ILoadable {
+interface ICore extends IGameObject extends IAsyncInitializable extends ILoadable {
     /**
      * Updates all the plugins.
      *

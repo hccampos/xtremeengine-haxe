@@ -1,10 +1,8 @@
 package xtremeengine.screens;
 
 import xtremeengine.Context;
-import xtremeengine.ICoreObject;
-import xtremeengine.IInitializable;
+import xtremeengine.IGameObject;
 import xtremeengine.ILoadable;
-import xtremeengine.IUpdateable;
 
 /**
  * Interface which defines a screen. A screen can be a menu, the main gameplay screen, a settings
@@ -12,7 +10,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IScreen extends ILoadable {
+interface IScreen extends IGameObject extends ILoadable {
     /**
      * Allows the screen to run logic, such as updating the transition position.
      *

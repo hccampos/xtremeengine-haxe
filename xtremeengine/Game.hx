@@ -4,6 +4,8 @@ import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.Lib;
+import msignal.Signal.Signal0;
+import msignal.Signal.Signal2;
 import xtremeengine.errors.Error;
 import xtremeengine.screens.IScreenManager;
 import xtremeengine.screens.ScreenManager;
@@ -13,7 +15,7 @@ import xtremeengine.screens.ScreenManager;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Game
+class Game implements IGame
 {
     private var _context:Context;
     private var _screenManager:IScreenManager;
@@ -22,6 +24,10 @@ class Game
     private var _scaleMode:StageScaleMode;
     private var _align:StageAlign;
     private var _lastTime:Int;
+
+    private var _onActivateSignal:Signal0;
+    private var _onDeactivateSignal:Signal0;
+    private var _onResizeSignal:Signal2<Float, Float>;
 
     //--------------------------------------------------------------------------------------------//
 
@@ -37,11 +43,15 @@ class Game
         _scaleMode = StageScaleMode.NO_SCALE;
         _align = StageAlign.TOP_LEFT;
 
+        _onActivateSignal = new Signal0();
+        _onDeactivateSignal = new Signal0();
+        _onResizeSignal = new Signal2<Float, Float>();
+
         _context.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
     }
 
     //--------------------------------------------------------------------------------------------//
-    //{ Methods
+    //{ Private Methods
     //--------------------------------------------------------------------------------------------//
 
     /**
@@ -52,7 +62,7 @@ class Game
 		
         this.setupStage();
 
-        _screenManager = new ScreenManager(_context);
+        _screenManager = new ScreenManager(this);
         this.setupInitialScreens();
         _screenManager.initialize();
 
@@ -75,9 +85,9 @@ class Game
 		_context.stage.frameRate = this.targetFps;
 
         _context.stage.addEventListener(Event.ENTER_FRAME, update);
-		_context.stage.addEventListener(Event.ACTIVATE, onActivate);
-		_context.stage.addEventListener(Event.DEACTIVATE, onDeactivate);
-        _context.stage.addEventListener(Event.RESIZE, onResize);
+		_context.stage.addEventListener(Event.ACTIVATE, onActivateHandler);
+		_context.stage.addEventListener(Event.DEACTIVATE, onDeactivateHandler);
+        _context.stage.addEventListener(Event.RESIZE, onResizeHandler);
     }
 
     /**
@@ -99,19 +109,23 @@ class Game
     /**
      * Activates the game. This should be called when the window or app gains focus.
      */
-    private function onActivate(event:Event):Void {
+    private function onActivateHandler(event:Event):Void {
         #if (mobile)
 		_context.stage.frameRate = 1;
 		#end
+
+        this.onActivate.dispatch();
     }
 
     /**
      * Deactivates the game. This should be called when the window or app loses focus.
      */
-    private function onDeactivate(event:Event):Void {
+    private function onDeactivateHandler(event:Event):Void {
         #if (mobile)
 		_context.stage.frameRate = TARGET_FPS;
 		#end
+
+        this.onDeactivate.dispatch();
     }
 
     /**
@@ -120,11 +134,13 @@ class Game
 	 * @param	event
 	 * 		Object with the event details.
 	 */
-    private function onResize(event:Event):Void {
+    private function onResizeHandler(event:Event):Void {
         if (!this.hasValidContext) { return; }
 
         var newWidth:Float = _context.stage.stageWidth;
         var newHeight:Float = _context.stage.stageHeight;
+
+        this.onResize.dispatch(newWidth, newHeight);
     }
 
     /**
@@ -149,6 +165,12 @@ class Game
     //--------------------------------------------------------------------------------------------//
     //{ Properties
     //--------------------------------------------------------------------------------------------//
+
+    /**
+     * The context where the game is to be displayed.
+     */
+    public var context(get, never):Context;
+    private inline function get_context():Context { return _context; }
 
     /**
      * The screen manager of the game.
@@ -196,6 +218,24 @@ class Game
     private inline function get_hasValidContext():Bool {
         return _context != null && _context.stage != null;
     }
+
+    /**
+     * Signal which is dispatched when the game is activated.
+     */
+    public var onActivate(get, never):Signal0;
+    private inline function get_onActivate():Signal0 { return _onActivateSignal; }
+
+    /**
+     * Signal which is dispatched when the game is deactivated.
+     */
+    public var onDeactivate(get, never):Signal0;
+    private inline function get_onDeactivate():Signal0 { return _onDeactivateSignal; }
+
+    /**
+     * Signal which is dispatched when the game is resized.
+     */
+    public var onResize(get, never):Signal2<Float, Float>;
+    private inline function get_onResize():Signal2 <Float, Float> { return _onResizeSignal; }
 
     //}
     //--------------------------------------------------------------------------------------------//

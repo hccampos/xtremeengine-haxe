@@ -1,6 +1,8 @@
 package xtremeengine.screens;
 
 import xtremeengine.Context;
+import xtremeengine.IGame;
+import xtremeengine.IGameObject;
 import xtremeengine.IInitializable;
 import xtremeengine.ILoadable;
 import xtremeengine.INamed;
@@ -13,7 +15,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IScreenManager extends IInitializable extends IUpdateable extends ILoadable extends IScreenCollection {
+interface IScreenManager extends IGameObject extends IInitializable extends IUpdateable extends ILoadable extends IScreenCollection {
     /**
      * The context to which the screens are added.
      */

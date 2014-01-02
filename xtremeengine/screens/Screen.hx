@@ -2,6 +2,8 @@ package xtremeengine.screens;
 
 import promhx.Promise;
 import xtremeengine.Context;
+import xtremeengine.GameObject;
+import xtremeengine.IGame;
 import xtremeengine.utils.MathUtils;
 import xtremeengine.utils.PromiseUtils;
 
@@ -10,7 +12,7 @@ import xtremeengine.utils.PromiseUtils;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Screen implements IScreen {
+class Screen extends GameObject implements IScreen {
     private static inline var ON_DIR:Float = -1;
     private static inline var OFF_DIR:Float = 1;
 
@@ -30,10 +32,12 @@ class Screen implements IScreen {
     /**
      * Constructor.
      *
-     * @param screenManager
-     *      The screen manager to which the screen belongs.
+     * @param game
+     *      The game to which the screen belongs.
      */
-    public function new():Void {
+    public function new(game:IGame):Void {
+        super(game);
+
         _screenManager = null;
         _context = new Context();
         _isLoaded = false;

@@ -20,7 +20,7 @@ import xtremeengine.utils.PromiseUtils;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Core extends EventDispatcher implements ICore {
+class Core extends GameObject implements ICore {
     private var _context:Context;
     private var _pluginFactory:IPluginFactory;
     private var _animationManager:IAnimationManager;
@@ -41,15 +41,13 @@ class Core extends EventDispatcher implements ICore {
 	/**
 	 * Constructor.
      *
-     * @param context
-     *      The context where all the visual elements that belong to this Core object will be
-     *      contained.
+     * @param game
+     *      The game to which the core belongs.
 	 */
-	public function new(context:Context):Void {
-        super();
+	public function new(game:IGame):Void {
+        super(game);
 
-        if (context == null) { throw new Error("To create a Core object, a context is required."); }
-        _context = context;
+        _context = game.context;
 
         _pluginFactory = new PluginFactory();
         _animationManager = null;
