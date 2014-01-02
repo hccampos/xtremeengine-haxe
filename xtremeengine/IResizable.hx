@@ -1,4 +1,4 @@
-package ;
+package xtremeengine;
 
 /**
  * Interface which defines elements that can be resized.

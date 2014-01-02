@@ -23,6 +23,16 @@ interface IGame {
     public var screenManager(get, never):IScreenManager;
 
     /**
+     * The width of the game screen/window.
+     */
+    public var width(get, never):Float;
+
+    /**
+     * The height of the game screen/window.
+     */
+    public var height(get, never):Float;
+
+    /**
      * The target frame rate.
      */
     public var targetFps(get, set):Int;

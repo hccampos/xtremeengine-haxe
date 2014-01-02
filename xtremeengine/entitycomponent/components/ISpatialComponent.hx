@@ -4,7 +4,8 @@ import xtremeengine.scene.ISceneNode;
 import xtremeengine.entitycomponent.IEntityComponent;
 
 /**
- * Interface which defines a spatial component.
+ * Interface which defines a spatial component. A spatial component gives other components access
+ * to the position, rotation and scale of the entity.
  *
  * A spatial component provides
  *

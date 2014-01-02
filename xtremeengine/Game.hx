@@ -1,5 +1,6 @@
 package xtremeengine;
 
+import flash.display.Stage;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import flash.events.Event;
@@ -80,14 +81,15 @@ class Game implements IGame
     private function setupStage():Void {
         if (!this.hasValidContext) { throw new Error("No valid context or stage."); }
 
-        _context.stage.align = this.align;
-		_context.stage.scaleMode = this.scaleMode;
-		_context.stage.frameRate = this.targetFps;
+        var stage:Stage = this.context.stage;
+        stage.align = this.align;
+		stage.scaleMode = this.scaleMode;
+		stage.frameRate = this.targetFps;
 
-        _context.stage.addEventListener(Event.ENTER_FRAME, update);
-		_context.stage.addEventListener(Event.ACTIVATE, onActivateHandler);
-		_context.stage.addEventListener(Event.DEACTIVATE, onDeactivateHandler);
-        _context.stage.addEventListener(Event.RESIZE, onResizeHandler);
+        stage.addEventListener(Event.ENTER_FRAME, update);
+		stage.addEventListener(Event.ACTIVATE, onActivateHandler);
+		stage.addEventListener(Event.DEACTIVATE, onDeactivateHandler);
+        stage.addEventListener(Event.RESIZE, onResizeHandler);
     }
 
     /**
@@ -177,6 +179,18 @@ class Game implements IGame
      */
     public var screenManager(get, never):IScreenManager;
     private inline function get_screenManager():IScreenManager { return _screenManager; }
+
+    /**
+     * The width of the game screen/window.
+     */
+    public var width(get, never):Float;
+    private inline function get_width():Float { return this.context.stage.stageWidth; }
+
+    /**
+     * The height of the game screen/window.
+     */
+    public var height(get, never):Float;
+    private inline function get_height():Float { return this.context.stage.stageHeight; }
 
     /**
      * The target frame rate.
