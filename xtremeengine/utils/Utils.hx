@@ -13,7 +13,7 @@ class Utils
 		return min + Math.random() * (max - min);
 	}
 	
-	public static function linearInterpolation(t:Float, startValue:Float, endValue:Float, duration:Float):Float {
+	public static function lerp(t:Float, startValue:Float, endValue:Float, duration:Float):Float {
 		return (endValue - startValue) * t / duration + startValue;
 	}
 }

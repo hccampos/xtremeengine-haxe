@@ -1,9 +1,9 @@
 package xtremeengine.gui;
 
+import xtremeengine.Context;
 import xtremeengine.ICore;
 import xtremeengine.Plugin;
 import flash.display.DisplayObjectContainer;
-import flash.Lib;
 
 /**
  * Default implementation of the IGuiManager interface.
@@ -11,7 +11,7 @@ import flash.Lib;
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
 class GuiManager extends Plugin implements IGuiManager {
-    private var _guiContainer:DisplayObjectContainer;
+    private var _context:Context;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;
 
@@ -28,6 +28,7 @@ class GuiManager extends Plugin implements IGuiManager {
     public function new(core:ICore, name:String):Void {
         super(core, name);
 
+        _context = new Context();
         _isEnabled = true;
         _updateOrder = 0;
     }
@@ -40,18 +41,16 @@ class GuiManager extends Plugin implements IGuiManager {
 	 * Initializes the GUI manager.
 	 */
 	public override function initialize():Void {
-        super.initialize();
+        this.core.context.addChild(this.context);
 
-		_guiContainer = new DisplayObjectContainer();
-		Lib.current.stage.addChild(_guiContainer);
+        super.initialize();
 	}
 
     /**
 	 * Destroys the GUI manager and any resources aquired by it.
 	 */
 	public override function destroy():Void {
-		Lib.current.stage.removeChild(_guiContainer);
-        _guiContainer = null;
+        this.core.context.removeChild(this.context);
 
         super.destroy();
 	}
@@ -73,10 +72,10 @@ class GuiManager extends Plugin implements IGuiManager {
     //--------------------------------------------------------------------------------------------//
 
     /**
-	 * The display object container which contains the GUI elements.
+	 * The context where the GUI elements are to be displayed.
 	 */
-    public var guiContainer(get, never):DisplayObjectContainer;
-    private inline function get_guiContainer():DisplayObjectContainer { return _guiContainer; }
+    public var context(get, never):Context;
+    private inline function get_context():Context { return _context; }
 
     /**
 	 * Whether the GUI manager is enabled.

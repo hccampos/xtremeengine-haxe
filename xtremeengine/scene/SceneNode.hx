@@ -159,6 +159,12 @@ class SceneNode implements ISceneNode {
     private inline function get_sceneManager():ISceneManager { return _sceneManager; }
 
     /**
+     * The context which is associated with the scene node.
+     */
+    public var context(get, never):Context;
+    private inline function get_context():Context { return _context; }
+
+    /**
      * The parent of this scene node.
      */
     public var parent(get, never):ISceneNode;

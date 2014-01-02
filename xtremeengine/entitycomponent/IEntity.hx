@@ -1,5 +1,6 @@
 package xtremeengine.entitycomponent;
 
+import xtremeengine.ICore;
 import xtremeengine.ICoreObject;
 import xtremeengine.INamed;
 import xtremeengine.IUpdateable;
@@ -19,4 +20,19 @@ interface IEntity extends ICoreObject extends IEntityComponentCollection extends
 	 * Calls the onReset() method on all the components of the entity.
 	 */
 	public function resetComponents():Void;
+
+    /**
+	 * Called when the entity is added to the entity manager.
+	 */
+	public function onAdd():Void;
+	
+	/**
+	 * Called when the entity is removed from the entity manager.
+	 */
+	public function onRemove():Void;
+
+    /**
+	 * The entity manager that owns the entity.
+	 */
+	public var owner(get, set):IEntityManager;
 }

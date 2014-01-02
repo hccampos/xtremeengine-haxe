@@ -152,6 +152,11 @@ class Core extends EventDispatcher implements ICore {
             promises.push(loadablePlugin.load());
         }
 
+        if (promises.length == 0) {
+            _isLoaded = true;
+            return PromiseUtils.resolved(true);
+        }
+
         return Promise.whenAll(promises).then(function (values):Bool {
             _isLoaded = true;
             return true;
@@ -171,6 +176,11 @@ class Core extends EventDispatcher implements ICore {
         var promises:Array<Promise<Bool>> = new Array<Promise<Bool>>();
         for (loadablePlugin in _loadablePlugins) {
             promises.push(loadablePlugin.unload());
+        }
+
+        if (promises.length == 0) {
+            _isLoaded = false;
+            return PromiseUtils.resolved(true);
         }
 
         return Promise.whenAll(promises).then(function (values):Bool {

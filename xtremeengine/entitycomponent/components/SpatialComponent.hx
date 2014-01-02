@@ -1,8 +1,9 @@
 package xtremeengine.entitycomponent.components;
 
-import xtremeengine.scene.ISceneNode;
 import xtremeengine.entitycomponent.EntityComponent;
 import xtremeengine.ICore;
+import xtremeengine.scene.ISceneManager;
+import xtremeengine.scene.ISceneNode;
 
 /**
  * Default implementation of the ISpatialComponent interface.
@@ -13,16 +14,15 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent {
     private var _sceneNode:ISceneNode;
 
     /**
-     * Initializes a new spatial component instance.
+     * Constructor.
      *
      * @param core
-     *      The core object to which the component belongs.
+     *      The core object to which the object belongs.
      * @param name
      *      The name of the component.
      */
     public function new(core:ICore, name:String):Void {
         super(core, name);
-        _sceneNode = core.sceneManager.createSceneNode();
     }
 
     /**
@@ -30,6 +30,10 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent {
 	 */
     public override function onAdd():Void {
         super.onAdd();
+
+        if (_sceneNode != null) { _sceneNode.remove(); }
+
+        _sceneNode = this.core.sceneManager.createSceneNode();
         this.core.sceneManager.rootSceneNode.addChild(_sceneNode);
     }
 
@@ -37,8 +41,9 @@ class SpatialComponent extends EntityComponent implements ISpatialComponent {
 	 * Called when the component is removed from an entity.
 	 */
     public override function onRemove():Void {
-        this.core.sceneManager.rootSceneNode.removeChild(_sceneNode);
         super.onRemove();
+
+        if (_sceneNode != null) { _sceneNode.remove(); }
     }
 
     /**

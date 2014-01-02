@@ -1,5 +1,6 @@
 package xtremeengine.scene;
 
+import xtremeengine.Context;
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
 import xtremeengine.Plugin;
@@ -10,6 +11,7 @@ import xtremeengine.Plugin;
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
 class SceneManager extends Plugin implements ISceneManager {
+    private var _sceneContext:Context;
 	private var _rootSceneNode:ISceneNode;
 	private var _activeCamera:ICamera;
 	private var _cameras:Array<ICamera>;
@@ -27,7 +29,8 @@ class SceneManager extends Plugin implements ISceneManager {
 	public function new(core:ICore, name:String):Void {
 		super(core, name);
 		
-		_rootSceneNode = null;
+        _sceneContext = new Context();
+		_rootSceneNode = new SceneNode(this, _sceneContext);
 		_activeCamera = null;
 		_cameras = new Array<ICamera>();
         _isEnabled = true;
@@ -38,9 +41,9 @@ class SceneManager extends Plugin implements ISceneManager {
 	 * Initializes the scene manager.
 	 */
 	public override function initialize():Void {
-        super.initialize();
+        this.core.context.addChild(_sceneContext);
 
-        _rootSceneNode = new SceneNode(this, this.core.context);
+        super.initialize();
 	}
 	
 	/**
@@ -48,10 +51,7 @@ class SceneManager extends Plugin implements ISceneManager {
 	 */
 	public override function destroy():Void {
         rootSceneNode.removeDescendants();
-
-		_rootSceneNode = null;
-		_activeCamera = null;
-		_cameras = null;
+        this.core.context.removeChild(_sceneContext);
 
         super.destroy();
 	}

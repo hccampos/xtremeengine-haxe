@@ -1,8 +1,7 @@
 package xtremeengine.entitycomponent;
 
-import xtremeengine.ICoreObject;
+import xtremeengine.ICore;
 import xtremeengine.INamed;
-import xtremeengine.Core;
 import xtremeengine.IUpdateable;
 
 /**
@@ -29,7 +28,12 @@ interface IEntityComponent extends INamed extends IUpdateable {
 	public function onRemove():Void;
 	
 	/**
-	 * The entity who owns the components (i.e. the entity to which the component has been added).
+	 * The entity who owns the component (i.e. the entity to which the component has been added).
 	 */
 	public var owner(get, set):IEntity;
+
+    /**
+     * The core object to which the component belongs.
+     */
+    public var core(get, never):ICore;
 }

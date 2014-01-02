@@ -43,6 +43,7 @@ class InputManager extends Plugin implements IInputManager {
     public override function initialize():Void {
         if (this.isInitialized) { return; }
 
+        _keyboard = new Keyboard(this);
         _currentKeyboardState = _keyboard.getState();
         _previousKeyboardState = _keyboard.getState();
 

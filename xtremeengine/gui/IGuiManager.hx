@@ -1,8 +1,8 @@
 package xtremeengine.gui;
 
+import xtremeengine.Context;
 import xtremeengine.IPlugin;
 import xtremeengine.IUpdateable;
-import flash.display.DisplayObjectContainer;
 
 /**
  * Interface which must be implemented by all the gui manager.
@@ -13,7 +13,7 @@ import flash.display.DisplayObjectContainer;
  */
 interface IGuiManager extends IPlugin extends IUpdateable {
     /**
-	 * The display object container which contains the GUI elements.
+	 * The context where the GUI elements are to be displayed.
 	 */
-    public var guiContainer(get, never):DisplayObjectContainer;
+    public var context(get, never):Context;
 }

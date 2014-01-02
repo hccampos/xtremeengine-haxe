@@ -1,6 +1,5 @@
 package xtremeengine.entitycomponent;
 
-import promhx.Promise;
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
 import xtremeengine.Plugin;
@@ -74,7 +73,10 @@ class EntityManager extends Plugin implements IEntityManager {
 			throw new Error("Trying to add an entity that has already been added to the entity manager.");
 		}
 
+        entity.owner = this;
         _entities.push(entity);
+
+        entity.onAdd();
     }
 	
 	/**
@@ -87,7 +89,14 @@ class EntityManager extends Plugin implements IEntityManager {
 	 */
 	public function removeEntity(entity:IEntity):Bool {
         if (entity == null) { return false; }
-        return _entities.remove(entity);
+
+        if (_entities.remove(entity)) {
+            entity.onRemove();
+            entity.owner = null;
+            return true;
+        } else {
+            return false;
+        }
     }
 	
 	/**

@@ -10,6 +10,7 @@ import xtremeengine.ICore;
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
 class Entity extends CoreObject implements IEntity {
+    private var _owner:IEntityManager;
 	private var _name:String;
 	private var _components:Array<IEntityComponent>;
 	private var _isEnabled:Bool;
@@ -18,15 +19,16 @@ class Entity extends CoreObject implements IEntity {
     //--------------------------------------------------------------------------------------------//
 
 	/**
-	 * Initializes a new Entity.
+	 * Constructor.
      *
-	 * @param core
-     *      The core object to which the entity belongs.
+     * @param core
+     *      The core to which the object belongs.
 	 * @param name
      *      The name of the new entity.
 	 */
 	public function new(core:ICore, name:String) {
 		super(core);
+
 		_name = name;
 		_components = new Array<IEntityComponent>();
 		_isEnabled = true;
@@ -36,6 +38,16 @@ class Entity extends CoreObject implements IEntity {
     //--------------------------------------------------------------------------------------------//
     //{ Public Methods
     //--------------------------------------------------------------------------------------------//
+
+    /**
+	 * Called when the entity is added to the entity manager.
+	 */
+	public function onAdd():Void {}
+	
+	/**
+	 * Called when the entity is removed from the entity manager.
+	 */
+	public function onRemove():Void {}
 
 	/**
 	 * Updates the state of the object.
@@ -80,9 +92,9 @@ class Entity extends CoreObject implements IEntity {
         if (component == null) { return false; }
 
 		if (_components.remove(component)) {
-			component.owner = null;
 			component.onRemove();
 			resetComponents();
+            component.owner = null;
 			return true;
 		} else {
 			return false;
@@ -203,6 +215,13 @@ class Entity extends CoreObject implements IEntity {
     //--------------------------------------------------------------------------------------------//
     //{ Properties
     //--------------------------------------------------------------------------------------------//
+
+    /**
+	 * The entity manager that owns the entity.
+	 */
+	public var owner(get, set):IEntityManager;
+    private inline function get_owner():IEntityManager { return _owner; }
+    private inline function set_owner(value:IEntityManager):IEntityManager { return _owner = value; }
 
 	/**
 	 * The name of the entity.

@@ -12,13 +12,13 @@ class EntityComponent extends CoreObject implements IEntityComponent {
     private var _name:String;
     private var _owner:IEntity;
     private var _isEnabled:Bool;
-    private var _updateOrder:Bool;
+    private var _updateOrder:Int;
 
     /**
-     * Initializes a new component.
+     * Constructor.
      *
      * @param core
-     *      The core object to which the component belongs.
+     *      The core to which the object belongs.
      * @param name
      *      The name of the component.
      */
@@ -56,6 +56,13 @@ class EntityComponent extends CoreObject implements IEntityComponent {
 	public function update(elapsedMillis:Float):Void {}
 
     /**
+	 * The entity who owns the components (i.e. the entity to which the component has been added).
+	 */
+	public var owner(get, set):IEntity;
+    private inline function get_owner():IEntity { return _owner; }
+    private inline function set_owner(value:IEntity):IEntity { return _owner = value; }
+
+    /**
      * The name of the component.
      */
     public var name(get, never):String;
@@ -74,11 +81,4 @@ class EntityComponent extends CoreObject implements IEntityComponent {
 	public var updateOrder(get, set):Int;
     private inline function get_updateOrder():Int { return _updateOrder; }
     private inline function set_updateOrder(value:Int):Int { return _updateOrder = value; }
-
-    /**
-	 * The entity who owns the components (i.e. the entity to which the component has been added).
-	 */
-	public var owner(get, set):IEntity;
-    private inline function get_owner():IEntity { return _owner; }
-    private inline function set_owner(value:IEntity):IEntity { return _owner = value; }
 }

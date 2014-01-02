@@ -1,4 +1,5 @@
 package xtremeengine.scene;
+import xtremeengine.Context;
 
 /**
  * Interface which defines a scene node.
@@ -57,6 +58,11 @@ interface ISceneNode extends IPositionable extends IRotateable extends IScalable
      * The scene manager to which the node belongs.
      */
     public var sceneManager(get, never):ISceneManager;
+
+    /**
+     * The context which is associated with the scene node.
+     */
+    public var context(get, never):Context;
 
     /**
      * The parent of this scene node.

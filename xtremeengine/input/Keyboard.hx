@@ -26,6 +26,7 @@ class Keyboard implements IKeyboard {
     {
         _inputManager = inputManager;
         _isInitialized = false;
+        _state = new KeyboardState();
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -37,8 +38,6 @@ class Keyboard implements IKeyboard {
 	 */
 	public function initialize():Void {
         if (_isInitialized) { return; }
-
-        _state = new KeyboardState();
 
         var context:Context = _inputManager.core.context;
         if (context != null && context.stage != null) {
@@ -55,7 +54,7 @@ class Keyboard implements IKeyboard {
 	public function destroy():Void {
         if (!_isInitialized) { return; }
 
-        _state = null;
+        _state = new KeyboardState();
 
         var context:Context = _inputManager.core.context;
         if (context != null && context.stage != null) {
@@ -69,7 +68,7 @@ class Keyboard implements IKeyboard {
     /**
      * Gets the current state of the keyboard.
      */
-    private inline function getState():IKeyboardState { return _state.clone(); }
+    public inline function getState():IKeyboardState { return _state.clone(); }
 
     //}
     //--------------------------------------------------------------------------------------------//
@@ -98,7 +97,7 @@ class Keyboard implements IKeyboard {
      *      The object which contains the event information.
      */
     private function onKeyDown(event:KeyboardEvent):Void {
-        _state.down(event.keyCode);
+        _state.setDown(event.keyCode);
     }
 
     /**
@@ -108,7 +107,7 @@ class Keyboard implements IKeyboard {
      *      The object which contains the event information.
      */
     private function onKeyUp(event:KeyboardEvent):Void {
-        _state.up(event.keyCode);
+        _state.setUp(event.keyCode);
     }
 
     //}

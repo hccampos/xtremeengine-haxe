@@ -12,7 +12,7 @@ class KeyboardState implements IKeyboardState {
      * Constructor.
      */
     public function new():Void {
-        _state:Array<Bool> = new Array<Bool>();
+        _state = new Array<Bool>();
         _state[255] = false; // Force the allocation of an array of size 256.
     }
 
