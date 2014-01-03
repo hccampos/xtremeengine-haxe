@@ -9,14 +9,12 @@ import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
 
 /**
- * Interface which must be implemented by plugin factories.
+ * Interface which must be implemented by core plugin factories.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPluginFactory {
+interface ICorePluginFactory {
     public function createAnimationManager(core:ICore, name:String):IAnimationManager;
-
-    public function createContentManager(core:ICore, name:String):IContentManager;
 
     public function createEntityManager(core:ICore, name:String):IEntityManager;
 

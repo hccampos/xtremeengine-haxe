@@ -53,7 +53,7 @@ interface IEntityComponentCollection {
      * @param cls
      *      The type of component that is to be retrieved.
      */
-    public function getComponentByType<T: IEntityComponent>(cls:Class<T>):T;
+    public function getComponentByType<T:IEntityComponent>(cls:Class<T>):T;
 	
 	/**
 	 * Gets an array with all the components of the specified type.

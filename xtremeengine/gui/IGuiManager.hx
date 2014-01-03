@@ -1,7 +1,7 @@
 package xtremeengine.gui;
 
 import xtremeengine.Context;
-import xtremeengine.IPlugin;
+import xtremeengine.ICorePlugin;
 import xtremeengine.IUpdateable;
 
 /**
@@ -11,7 +11,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IGuiManager extends IPlugin extends IUpdateable {
+interface IGuiManager extends ICorePlugin extends IUpdateable {
     /**
 	 * The context where the GUI elements are to be displayed.
 	 */

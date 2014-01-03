@@ -2,7 +2,7 @@ package xtremeengine.screens;
 
 import promhx.Promise;
 import xtremeengine.Context;
-import xtremeengine.GameObject;
+import xtremeengine.GamePlugin;
 import xtremeengine.IGame;
 import xtremeengine.utils.PromiseUtils;
 
@@ -11,10 +11,9 @@ import xtremeengine.utils.PromiseUtils;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class ScreenManager extends GameObject implements IScreenManager {
+class ScreenManager extends GamePlugin implements IScreenManager {
     private var _context:Context;
     private var _screens:Array<IScreen>;
-    private var _isInitialized:Bool;
     private var _isLoaded:Bool;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;
@@ -26,11 +25,12 @@ class ScreenManager extends GameObject implements IScreenManager {
      *
      * @param game
      *      The game to which the screen manager belongs.
+     * @param name
+     *      The name of the screen manager.
      */
-    public function new(game:IGame):Void {
-        super(game);
+    public function new(game:IGame, name:String):Void {
+        super(game, name);
 
-        _isInitialized = false;
         _isLoaded = false;
         _isEnabled = true;
         _updateOrder = 0;
@@ -43,27 +43,28 @@ class ScreenManager extends GameObject implements IScreenManager {
     /**
 	 * Initializes the object.
 	 */
-	public function initialize():Void {
-        if (_isInitialized) { return; }
+	public override function initialize():Void {
+        if (this.isInitialized) { return; }
+
         _screens = new Array<IScreen>();
-        _isInitialized = true;
+
+        super.initialize();
     }
 
 	/**
 	 * Called before the manager is destroyed.
 	 */
-	public function destroy():Void {
-        if (!_isInitialized) { return; }
+	public override function destroy():Void {
+        if (!this.isInitialized) { return; }
 
         this.unload();
         _screens = new Array<IScreen>();
 
-        _isInitialized = false;
+        super.destroy();
     }
 
     /**
-     * Loads any required resources required by the screen manager or any of the screens managed by
-     * it.
+     * Loads any resources required by the screen manager or any of the screens managed by it.
      */
     public function load():Promise<Bool> {
         if (_isLoaded) { return PromiseUtils.resolved(true); }
@@ -214,12 +215,6 @@ class ScreenManager extends GameObject implements IScreenManager {
      */
     public var screens(get, never):Array<IScreen>;
     private inline function get_screens():Array<IScreen> { return _screens; }
-
-    /**
-     * Whether the screen manager has been initialized.
-     */
-    public var isInitialized(get, never):Bool;
-    private inline function get_isInitialized():Bool { return _isInitialized; }
 
     /**
      * Whether the screen manager has been loaded.

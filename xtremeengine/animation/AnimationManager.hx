@@ -3,14 +3,14 @@ package xtremeengine.animation;
 import promhx.Promise;
 import xtremeengine.errors.Error;
 import xtremeengine.ICore;
-import xtremeengine.Plugin;
+import xtremeengine.CorePlugin;
 
 /**
  * Default implementation of the IAnimationManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class AnimationManager extends Plugin implements IAnimationManager {
+class AnimationManager extends CorePlugin implements IAnimationManager {
     private var _animations:Array<IAnimation>;
     private var _isEnabled:Bool;
     private var _updateOrder:Int;

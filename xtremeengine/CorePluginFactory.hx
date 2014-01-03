@@ -10,27 +10,23 @@ import xtremeengine.gui.GuiManager;
 import xtremeengine.gui.IGuiManager;
 import xtremeengine.input.IInputManager;
 import xtremeengine.input.InputManager;
-import xtremeengine.IPluginFactory;
+import xtremeengine.ICorePluginFactory;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.physics.NapePhysicsManager;
 import xtremeengine.scene.ISceneManager;
 import xtremeengine.scene.SceneManager;
 
 /**
- * Default implementation of the IPluginFactory interface. Subclasses can override the methods of
- * the factory in order to customize the plugin creation process and instantiate custom plugins.
+ * Default implementation of the ICorePluginFactory interface. Subclasses can override the methods
+ * of the factory in order to customize the plugin creation process and instantiate custom plugins.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class PluginFactory implements IPluginFactory {
+class CorePluginFactory implements ICorePluginFactory {
     public function new() { }
 
     public function createAnimationManager(core:ICore, name:String):IAnimationManager {
         return new AnimationManager(core, name);
-    }
-
-    public function createContentManager(core:ICore, name:String):IContentManager {
-        return new ContentManager(core, name);
     }
 
     public function createEntityManager(core:ICore, name:String):IEntityManager {

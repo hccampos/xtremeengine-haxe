@@ -1,14 +1,13 @@
 package xtremeengine;
 
-import flash.events.EventDispatcher;
 import promhx.Promise;
 import xtremeengine.animation.IAnimationManager;
 import xtremeengine.content.IContentManager;
 import xtremeengine.entitycomponent.IEntityManager;
 import xtremeengine.errors.Error;
 import xtremeengine.gui.IGuiManager;
+import xtremeengine.ICorePlugin;
 import xtremeengine.input.IInputManager;
-import xtremeengine.IPlugin;
 import xtremeengine.IUpdateable;
 import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
@@ -22,7 +21,8 @@ import xtremeengine.utils.PromiseUtils;
  */
 class Core extends GameObject implements ICore {
     private var _context:Context;
-    private var _pluginFactory:IPluginFactory;
+    private var _pluginFactory:ICorePluginFactory;
+
     private var _animationManager:IAnimationManager;
     private var _contentManager:IContentManager;
 	private var _entityManager:IEntityManager;
@@ -30,7 +30,8 @@ class Core extends GameObject implements ICore {
     private var _inputManager:IInputManager;
 	private var _physicsManager:IPhysicsManager;
     private var _sceneManager:ISceneManager;
-	private var _plugins:Array<IPlugin>;
+
+	private var _plugins:Array<ICorePlugin>;
 	private var _updateablePlugins:Array<IUpdateable>;
     private var _loadablePlugins:Array<ILoadable>;
 	private var _isInitialized:Bool;
@@ -49,16 +50,15 @@ class Core extends GameObject implements ICore {
 
         _context = game.context;
 
-        _pluginFactory = new PluginFactory();
+        _pluginFactory = new CorePluginFactory();
         _animationManager = null;
-        _contentManager = null;
 		_entityManager = null;
 		_guiManager = null;
         _inputManager = null;
         _physicsManager = null;
         _sceneManager = null;
 
-		_plugins = new Array<IPlugin>();
+		_plugins = new Array<ICorePlugin>();
 		_updateablePlugins = new Array<IUpdateable>();
         _loadablePlugins = new Array<ILoadable>();
 
@@ -78,9 +78,8 @@ class Core extends GameObject implements ICore {
 	public function initialize():Promise<Bool> {
         if (_isInitialized) { return PromiseUtils.resolved(true); }
 
-        var factory:IPluginFactory = this.pluginFactory;
+        var factory:ICorePluginFactory = this.pluginFactory;
 
-        _contentManager = factory.createContentManager(this, "contentManager");
 		_sceneManager = factory.createSceneManager(this, "sceneManager");
         _physicsManager = factory.createPhysicsManager(this, "physicsManager");
 		_entityManager = factory.createEntityManager(this, "entityManager");
@@ -88,7 +87,6 @@ class Core extends GameObject implements ICore {
         _inputManager = factory.createInputManager(this, "inputManager");
 		_animationManager = factory.createAnimationManager(this, "animationManager");
 		
-        this.addPlugin(_contentManager);
         this.addPlugin(_inputManager);
         this.addPlugin(_sceneManager);
         this.addPlugin(_physicsManager);
@@ -96,9 +94,7 @@ class Core extends GameObject implements ICore {
         this.addPlugin(_guiManager);
         this.addPlugin(_entityManager);
 
-        for (plugin in _plugins) {
-            plugin.initialize();
-        }
+        for (plugin in _plugins) { plugin.initialize(); }
 
         return this.load().then(function (value):Bool {
             _isInitialized = true;
@@ -114,23 +110,20 @@ class Core extends GameObject implements ICore {
 	public function destroy():Promise<Bool> {
         if (!_isInitialized) { return PromiseUtils.resolved(true); }
 
-        for (plugin in _plugins) {
-            plugin.destroy();
-        }
+        for (plugin in _plugins) { plugin.destroy(); }
 
         return this.unload().then(function (value):Bool {
             _animationManager = null;
-            _contentManager = null;
             _entityManager = null;
             _guiManager = null;
             _inputManager = null;
             _physicsManager = null;
             _sceneManager = null;
-            _plugins = new Array<IPlugin>();
+            _plugins = new Array<ICorePlugin>();
             _updateablePlugins = new Array<IUpdateable>();
             _loadablePlugins = new Array<ILoadable>();
-
             _isInitialized = false;
+
             return true;
         });
 	}
@@ -207,7 +200,7 @@ class Core extends GameObject implements ICore {
      *
      * @return A promise which is resolved when the plugin has been installed.
      */
-    public function installPlugin(plugin:IPlugin):Promise<Bool> {
+    public function installPlugin(plugin:ICorePlugin):Promise<Bool> {
         if (plugin == null) { return PromiseUtils.rejected(new Error("Intalling null plugin.")); }
 
         this.addPlugin(plugin);
@@ -228,7 +221,7 @@ class Core extends GameObject implements ICore {
      *
      * @return A promise which is resolved when the plugin has been uninstalled.
      */
-    public function uninstallPlugin(plugin:IPlugin):Promise<Bool> {
+    public function uninstallPlugin(plugin:ICorePlugin):Promise<Bool> {
         if (plugin == null) { return PromiseUtils.rejected(new Error("Uninstalling null plugin.")); }
         if (!Lambda.has(_plugins, plugin)) { return PromiseUtils.resolved(false); }
 
@@ -239,37 +232,76 @@ class Core extends GameObject implements ICore {
         });
     }
 
-	/**
-	 * Gets the plugin with the specified name. If no name is specified the returned plug-in will be
-	 * the first one to match (same type, subclass, implements interface, etc) the specified type
-	 * parameter T.
-	 */
-	public function getPlugin<T: IPlugin>(?name:String, cls:Class<T>):T {
-        for (plugin in _plugins) {
-            var nameMatches:Bool = name == null ? true : plugin.name == name;
-            if (Std.is(plugin, cls) && nameMatches) {
-                var ret:T = cast plugin;
-                return ret;
-            }
-        }
-
-        return null;
-	}
-	
     /**
      * Gets the plugin with the specified name.
      *
      * @param name
      *      The name of the plugin which is to be retrieved.
      *
-     * @return The plugin which has the specified name.0
+     * @return The plugin which has the specified name.
      */
-    public function getPluginByName(name:String):IPlugin {
+    public function getPluginByName(name:String):ICorePlugin {
+        if (name == null || name == "") { return null; }
+
         for (plugin in _plugins) {
             if (plugin.name == name) { return plugin; }
         }
 
         return null;
+    }
+
+	/**
+	 * Gets the first plugin that has the specified type.
+	 */
+	public function getPluginByType<T:ICorePlugin>(cls:Class<T>):T {
+        for (plugin in _plugins) {
+            if (Std.is(plugin, cls)) {
+                var ret:T = cast plugin;
+                return ret;
+            }
+        }
+		
+		return null;
+	}
+
+    /**
+	 * Gets an array with all the plugins of the specified type.
+	 */
+	public function getPluginsByType<T:ICorePlugin>(cls:Class<T>):Array<T> {
+        var foundPlugins:Array<T> = new Array<T>();
+		
+		for (plugin in _plugins) {
+			if (Std.is(plugin, cls)) {
+				var foundPlugin:T = cast plugin;
+				foundPlugins.push(foundPlugin);
+			}
+		}
+		
+		return foundPlugins;
+    }
+
+    /**
+     * Gets whether the core has the specified plugin.
+     *
+     * @param plugin
+     *      The plugin which is to be found.
+     *
+     * @return True if the core has the plugin and false otherwise.
+     */
+    public function hasPlugin(plugin:ICorePlugin):Bool {
+        return Lambda.has(_plugins, plugin);
+    }
+
+    /**
+     * Gets whether the core has a plugin with the specified name.
+     *
+     * @param name
+     *      The name of the plugin which is to be found.
+     *
+     * @return True if the core has the plugin and false otherwise.
+     */
+    public function hasPluginNamed(name:String):Bool {
+        return this.getPluginByName(name) != null;
     }
 
     //}
@@ -288,7 +320,7 @@ class Core extends GameObject implements ICore {
      *
      * @return A promise which is resolved when operation is complete.
      */
-    private function loadPlugin(plugin:IPlugin):Promise<Bool> {
+    private function loadPlugin(plugin:ICorePlugin):Promise<Bool> {
         if (this.isLoaded && Std.is(plugin, ILoadable)) {
             var loadablePlugin:ILoadable = cast plugin;
             return loadablePlugin.load();
@@ -306,7 +338,7 @@ class Core extends GameObject implements ICore {
      *
      * @return A promise which is resolved when operation is complete.
      */
-    private function unloadPlugin(plugin:IPlugin):Promise<Bool> {
+    private function unloadPlugin(plugin:ICorePlugin):Promise<Bool> {
          if (this.isLoaded && Std.is(plugin, ILoadable)) {
             var loadablePlugin:ILoadable = cast plugin;
             return loadablePlugin.unload();
@@ -316,12 +348,12 @@ class Core extends GameObject implements ICore {
     }
 
     /**
-     * Adds a plugin to the engine.
+     * Adds a plugin.
      *
      * @param plugin
-     *      The plugin which is to be added to the engine.
+     *      The plugin which is to be added..
      */
-    private function addPlugin(plugin:IPlugin):Void {
+    private function addPlugin(plugin:ICorePlugin):Void {
         _plugins.push(plugin);
 
         if (Std.is(plugin, IUpdateable)) {
@@ -340,14 +372,14 @@ class Core extends GameObject implements ICore {
     }
 
     /**
-     * Removes the specified plugin from the engine.
+     * Removes the specified plugin.
      *
      * @param plugin
      *      The plugin which is to be removed.
      *
      * @return True if the plugin was removed and false otherwise.
      */
-    private function removePlugin(plugin:IPlugin):Bool {
+    private function removePlugin(plugin:ICorePlugin):Bool {
         if (plugin == null) { return false; }
         if (!_plugins.remove(plugin)) { return false; }
 
@@ -380,20 +412,20 @@ class Core extends GameObject implements ICore {
     /**
      * The plugin factory used to create the default plugins used by the core.
      */
-    public var pluginFactory(get, set):IPluginFactory;
-    private inline function get_pluginFactory():IPluginFactory { return _pluginFactory; }
-    private inline function set_pluginFactory(value:IPluginFactory):IPluginFactory {
+    public var pluginFactory(get, set):ICorePluginFactory;
+    private inline function get_pluginFactory():ICorePluginFactory { return _pluginFactory; }
+    private inline function set_pluginFactory(value:ICorePluginFactory):ICorePluginFactory {
         return _pluginFactory = value;
     }
 
     /**
-     * Whether the engine has been initialized.
+     * Whether the core has been initialized.
      */
     public var isInitialized(get, never):Bool;
     private inline function get_isInitialized():Bool { return _isInitialized; }
 
     /**
-     * Whether the object is loaded.
+     * Whether the core has been loaded.
      */
     public var isLoaded(get, never):Bool;
     private inline function get_isLoaded():Bool { return _isLoaded; }
@@ -403,12 +435,6 @@ class Core extends GameObject implements ICore {
      */
     public var animationManager(get, never):IAnimationManager;
     private inline function get_animationManager():IAnimationManager { return _animationManager; }
-
-    /**
-     * The content manager.
-     */
-    public var contentManager(get, never):IContentManager;
-    private inline function get_contentManager():IContentManager { return _contentManager; }
 
     /**
      * The entity-component manager.

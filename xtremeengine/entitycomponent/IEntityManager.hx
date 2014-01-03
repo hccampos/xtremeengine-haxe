@@ -1,5 +1,8 @@
 package xtremeengine.entitycomponent;
 
+import xtremeengine.ICorePlugin;
+import xtremeengine.IUpdateable;
+
 /**
  * Interface which must be implemented by all the entity managers.
  * An entity manager is responsible for managing all the entities in the game and making sure
@@ -7,4 +10,4 @@ package xtremeengine.entitycomponent;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IEntityManager extends IPlugin extends IEntityCollection extends IUpdateable {}
+interface IEntityManager extends ICorePlugin extends IEntityCollection extends IUpdateable {}

@@ -1,5 +1,5 @@
 package xtremeengine.animation;
-import xtremeengine.IPlugin;
+import xtremeengine.ICorePlugin;
 import xtremeengine.IUpdateable;
 
 /**
@@ -10,7 +10,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IAnimationManager extends IPlugin extends IAnimationCollection extends IUpdateable {
+interface IAnimationManager extends ICorePlugin extends IAnimationCollection extends IUpdateable {
 	/**
 	 * Plays all the animations.
 	 */

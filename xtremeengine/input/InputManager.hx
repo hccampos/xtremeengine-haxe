@@ -1,14 +1,14 @@
 package xtremeengine.input;
 
 import xtremeengine.input.IInputManager;
-import xtremeengine.Plugin;
+import xtremeengine.CorePlugin;
 
 /**
  * Default implementation of the IInputManager interface.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class InputManager extends Plugin implements IInputManager {
+class InputManager extends CorePlugin implements IInputManager {
     private var _keyboard:IKeyboard;
     private var _currentKeyboardState:IKeyboardState;
     private var _previousKeyboardState:IKeyboardState;

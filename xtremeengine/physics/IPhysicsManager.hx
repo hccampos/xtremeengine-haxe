@@ -1,7 +1,7 @@
 package xtremeengine.physics;
 
 import xtremeengine.utils.Vec2;
-import xtremeengine.IPlugin;
+import xtremeengine.ICorePlugin;
 import xtremeengine.IUpdateable;
 
 /**
@@ -9,7 +9,7 @@ import xtremeengine.IUpdateable;
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IPhysicsManager extends IPlugin extends IUpdateable extends IPhysicsControllerCollection {
+interface IPhysicsManager extends ICorePlugin extends IUpdateable extends IPhysicsControllerCollection {
 	/**
 	 * The gravity force which is applied to all the physics objects.
 	 */

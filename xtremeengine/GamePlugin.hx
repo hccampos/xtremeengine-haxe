@@ -1,27 +1,28 @@
 package xtremeengine;
+
 import promhx.Promise;
 import xtremeengine.utils.Utils;
 
 /**
- * Abstract class which implements the common members of the IPlugin interface. Subclasses should
- * override the initialize() and destroy() methods.
+ * Abstract class which implements the common members of the IGamePlugin interface. Subclasses
+ * should override the initialize() and destroy() methods.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class Plugin extends CoreObject implements IPlugin {
+class GamePlugin extends GameObject implements IGamePlugin {
 	private var _name:String;
     private var _isInitialized:Bool;
 	
 	/**
 	 * Initializes the instance.
 	 *
-	 * @param core
-	 * 		The core object to which the plugin belongs.
+	 * @param game
+	 * 		The game to which the plugin belongs.
 	 * @param name
 	 * 		The name of the new plugin.
 	 */
-	public function new(core:ICore, name:String):Void {
-		super(core);
+	public function new(game:IGame, name:String):Void {
+		super(game);
 
 		_name = name;
         _isInitialized = false;
@@ -37,8 +38,8 @@ class Plugin extends CoreObject implements IPlugin {
     }
 	
 	/**
-	 * Called before the plugin is removed from the core object or when the core object is about to
-	 * be destroyed. The plugin should destroy any resources it may have created.
+	 * Called before the plugin is removed from the game or when the game is about to be destroyed.
+     * The plugin should destroy any resources it may have created.
      *
      * @return A promise which is resolved when the plugin has been destroyed.
 	 */

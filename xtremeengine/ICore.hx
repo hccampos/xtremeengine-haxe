@@ -10,8 +10,10 @@ import xtremeengine.physics.IPhysicsManager;
 import xtremeengine.scene.ISceneManager;
 
 /**
- * Interface which defines an XtremeEngine core object. A core object is responsible for managing
- * all the plugins of the engine and making sure everything fits together nicely.
+ * Interface which defines an XtremeEngine core object. A core object is usually associated with a
+ * game screen and makes use of several plugins like a scene manager to define the current scene,
+ * an entity-component manager to manager entities and their components, a physics manager to add
+ * physics simulation to the scene, etc.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
@@ -25,41 +27,66 @@ interface ICore extends IGameObject extends IAsyncInitializable extends ILoadabl
     public function update(elapsedMillis:Float):Void;
 	
     /**
-     * Installs the specified plugin in the engine.
+     * Installs the specified plugin.
      *
      * @param plugin
      *      The plugin which is to be installed.
      *
      * @return A promise which is resolved when the plugin has been installed.
      */
-    public function installPlugin(plugin:IPlugin):Promise<Bool>;
+    public function installPlugin(plugin:ICorePlugin):Promise<Bool>;
 
     /**
-     * Uninstalls the specified plugin from the engine.
+     * Uninstalls the specified plugin.
      *
      * @param plugin
      *      The plugin which is to be uninstalled.
      *
      * @return A promise which is resolved when the plugin has been uninstalled.
      */
-    public function uninstallPlugin(plugin:IPlugin):Promise<Bool>;
+    public function uninstallPlugin(plugin:ICorePlugin):Promise<Bool>;
 
-	/**
-	 * Gets the plugin with the specified name. If no name is specified the returned plug-in will be
-	 * the first one to match (same type, subclass, implements interface, etc) the specified type
-	 * parameter T.
-	 */
-	public function getPlugin<T: IPlugin>(?name:String, cls:Class<T>):T;
-	
     /**
      * Gets the plugin with the specified name.
      *
      * @param name
      *      The name of the plugin which is to be retrieved.
      *
-     * @return The plugin which has the specified name.0
+     * @return The plugin which has the specified name.
      */
-    public function getPluginByName(name:String):IPlugin;
+    public function getPluginByName(name:String):ICorePlugin;
+
+	/**
+	 * Gets the first plugin that has the specified type.
+	 */
+	public function getPluginByType<T:ICorePlugin>(cls:Class<T>):T;
+
+    /**
+	 * Gets an array with all the plugins of the specified type.
+	 */
+	public function getPluginsByType<T:ICorePlugin>(cls:Class<T>):Array<T>;
+
+    /**
+     * Gets whether the core has the specified plugin.
+     *
+     * @param plugin
+     *      The plugin which is to be found.
+     *
+     * @return True if the core has the plugin and false otherwise.
+     */
+    public function hasPlugin(plugin:ICorePlugin):Bool;
+
+    /**
+     * Gets whether the core has a plugin with the specified name.
+     *
+     * @param name
+     *      The name of the plugin which is to be found.
+     *
+     * @return True if the core has the plugin and false otherwise.
+     */
+    public function hasPluginNamed(name:String):Bool;
+
+    //--------------------------------------------------------------------------------------------//
 
     /**
      * The context where all the visual elements that belong to this core object will be contained.
@@ -69,17 +96,12 @@ interface ICore extends IGameObject extends IAsyncInitializable extends ILoadabl
     /**
      * The plugin factory used to create the default plugins used by the core.
      */
-    public var pluginFactory(get, set):IPluginFactory;
+    public var pluginFactory(get, set):ICorePluginFactory;
 
     /**
      * The animation manager.
      */
     public var animationManager(get, never):IAnimationManager;
-
-    /**
-     * The content manager.
-     */
-    public var contentManager(get, never):IContentManager;
 
     /**
      * The entity-component manager.

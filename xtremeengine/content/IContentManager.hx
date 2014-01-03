@@ -1,14 +1,13 @@
 package xtremeengine.content;
 
-import xtremeengine.IPlugin;
-import xtremeengine.IUpdateable;
+import xtremeengine.IGamePlugin;
 
 /**
  * Interface which must be implemented by all the content managers.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IContentManager extends IPlugin {
+interface IContentManager extends IGamePlugin {
     /**
      * Gets whether assets of the specified format can be loaded.
      *

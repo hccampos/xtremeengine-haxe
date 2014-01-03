@@ -2,19 +2,19 @@ package xtremeengine.content;
 
 import promhx.Promise;
 import xtremeengine.ICore;
-import xtremeengine.Plugin;
+import xtremeengine.GamePlugin;
+import xtremeengine.IGame;
 
 /**
- * ...
+ * Default implementation of the IContentManager interface.
+ *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-class ContentManager extends Plugin implements IContentManager
-{
+class ContentManager extends GamePlugin implements IContentManager {
     private var _formats:Array<String>;
 
-    public function new(core:ICore, name:String):Void
-    {
-        super(core, name);
+    public function new(game:IGame, name:String):Void {
+        super(game, name);
         _formats = new Array<String>();
     }
 

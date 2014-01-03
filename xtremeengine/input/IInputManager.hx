@@ -1,12 +1,15 @@
 package xtremeengine.input;
 
+import xtremeengine.ICorePlugin;
+import xtremeengine.IUpdateable;
+
 /**
  * Interface which defines an InputManager plugin. An input manager is responsible for keeping track
  * and giving access to user input through various input devices.
  *
  * @author Hugo Campos <hcfields@gmail.com> (www.hccampos.net)
  */
-interface IInputManager extends IPlugin extends IUpdateable {
+interface IInputManager extends ICorePlugin extends IUpdateable {
     /**
      * Gets whether the specified key is up.
      *
